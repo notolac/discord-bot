@@ -57,4 +57,4 @@ convention = "google"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["_shared/discord_core/tests", "bots/heimdal/tests", "bots/odin/tests"]
+testpaths = ["_shared/discord_core/tests", "bots/heimdal/tests", "bots/odin/tests", "Skills/admin-helper/tests"]

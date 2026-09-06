@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Resolve Python 3.14 for admin_helper.py. Never use bare system python3.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
+PY_SCRIPT="${SCRIPT_DIR}/admin_helper.py"
+VENV_PY="${REPO_ROOT}/.venv/bin/python"
+
+if command -v uv >/dev/null 2>&1; then
+  exec uv run --python 3.14 "${PY_SCRIPT}" "$@"
+fi
+
+if [[ -x "${VENV_PY}" ]]; then
+  exec "${VENV_PY}" "${PY_SCRIPT}" "$@"
+fi
+
+cat >&2 <<'EOF'
+admin_helper needs Python 3.14 (repo standard via uv).
+Do not run with system python3.
+
+  uv run --python 3.14 Skills/admin-helper/scripts/admin_helper.py <command> [args]
+  # or, from repo root:
+  ./Skills/admin-helper/scripts/admin_helper <command> [args]
+EOF
+exit 1

@@ -99,14 +99,24 @@ discord-bot/
 ├── pyproject.toml                ← uv workspace root + ruff + pytest
 ├── uv.lock
 ├── .cursor/
-│   ├── rules/
-│   │   └── discord-bot.mdc       ← short always-on rules (uv, pins, secrets, English, skill)
-│   └── skills/
-│       └── discord-docs/         ← Discord knowledge-base skill (§7)
-│           ├── SKILL.md
-│           ├── index.md          ← curated page index (from llms.txt)
-│           └── scripts/
-│               └── fetch_discord_docs.py
+│   └── rules/
+│       └── discord-bot.mdc       ← short always-on rules (uv, pins, secrets, English, skill)
+├── Skills/
+│   ├── install_skills.sh         ← symlink/copy skills into IDE discovery paths
+│   ├── discord-docs/             ← Discord knowledge-base skill (§7)
+│   │   ├── SKILL.md
+│   │   ├── README.md
+│   │   ├── index.md              ← curated page index (from llms.txt)
+│   │   ├── commands/opencode/
+│   │   └── scripts/
+│   │       └── fetch_discord_docs.py
+│   └── admin-helper/             ← guild admin CLI (members, channels, reports)
+│       ├── SKILL.md
+│       ├── README.md
+│       ├── commands/opencode/
+│       ├── workflows/
+│       └── scripts/
+│           └── admin_helper.py
 ├── docs/
 │   ├── architecture.md           ← HTTP vs Gateway, discord_core, deployment
 │   ├── developer-portal.md       ← checklist: create app, intents, install link, scopes
@@ -266,6 +276,13 @@ destructive policy.
 !**/reports/.gitkeep
 !**/reports/README.md
 docs/discord/            # official docs cache (regenerable)
+Skills/*/.install-manifest
+.cursor/skills/          # IDE install target (Skills/ is the source)
+.github/skills/
+.opencode/skills/
+.opencode/commands/
+.claude/skills/
+.agents/skills/
 .venv/
 **/__pycache__/
 *.pyc
@@ -354,9 +371,10 @@ Extensions (open tasks): Gateway for `GUILD_MEMBER_ADD` in Heimdal; AutoMod in O
 
 ## 7. `discord-docs` skill (official knowledge base)
 
-**Location:** `.cursor/skills/discord-docs/` (project skill, versioned with the repo).
-Optional: symlink `~/.cursor/skills/discord-docs → <repo>/.cursor/skills/discord-docs`
-(same pattern as `enciclopedia-financiera`) to use it from any project.
+**Location:** `Skills/discord-docs/` (portable Agent Skill, versioned with the repo).
+Install into IDE discovery paths with `./Skills/install_skills.sh` (symlinks
+`.cursor/skills/`, `.github/skills/`, `.opencode/skills/`, `.claude/skills/`,
+`.agents/skills/` — those folders are gitignored). OpenCode command: `/discord.docs`.
 
 **Frontmatter:**
 
@@ -374,7 +392,7 @@ description: >-
 **`SKILL.md` content (≤ 150 lines, English):**
 
 1. **Mandatory lookup order:** (1) local `docs/discord/<path>.md` → (2)
-   `python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py <slug|--all>` to
+   `python Skills/discord-docs/scripts/fetch_discord_docs.py <slug|--all>` to
    fetch/refresh → (3) only then web search. Never invent endpoints, enum values or limits:
    cite the page and section.
 2. **Curated index (`index.md`):** table *topic → official URL → local path*, starting with
@@ -423,5 +441,6 @@ bash bots/heimdal/scripts/run-dev.sh                         # uvicorn :8000
 bash _shared/scripts/dev-tunnel.sh 8000                      # public URL → Portal › Interactions Endpoint URL
 bash bots/heimdal/scripts/smoke-test.sh                      # local signed PING
 bash _shared/scripts/new-bot.sh thor "Events bot"            # new bot from _template
-python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py --all   # refresh docs cache
+python Skills/discord-docs/scripts/fetch_discord_docs.py --all   # refresh docs cache
+./Skills/install_skills.sh --auto --skill discord-docs          # IDE discovery paths
 ```
