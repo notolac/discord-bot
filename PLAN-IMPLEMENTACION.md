@@ -78,9 +78,8 @@ Each bot depends on `discord_core` through the uv workspace (`{ workspace = true
   localized to Spanish through `name_localizations` / `description_localizations` and a
   per-bot `i18n/` string table (`es-ES` first). No Spanish literals inline in handlers.
 - **Docs:** `AGENTS.md`, `.cursor/rules/*.mdc`, the `discord-docs` skill, `docs/*.md`, bot
-  `README.md`s and `tareas/*.md` are written in **English**. The root `README.md` stays
-  **Spanish** as the human entry point (matching `home-lab`); match the language of the file
-  you edit.
+  README files, the root `README.md`, and `tareas/*.md` are written in **English**. Discord
+  localization data remains intentionally language-specific.
 - Enforced by: `ruff` (naming rules `N*`), a review checklist item in `AGENTS.md`, and a
   `.cursor/rules/discord-bot.mdc` always-on reminder. Non-English code found in a PR is a
   blocker, not a nit.
@@ -91,7 +90,7 @@ Each bot depends on `discord_core` through the uv workspace (`{ workspace = true
 
 ```text
 discord-bot/
-├── README.md                     ← human, Spanish (adapted from home-lab)
+├── README.md                     ← human-facing repository entry point
 ├── AGENTS.md                     ← LLM, English (adapted from home-lab)
 ├── PLAN-IMPLEMENTACION.md        ← this document
 ├── LICENSE
@@ -126,7 +125,7 @@ discord-bot/
 │   ├── README.md                 ← bot index + status
 │   ├── _template/                ← placeholder for new bots (same structure)
 │   ├── heimdal/                  ← Onboarding
-│   └── odin/                     ← Moderation (ASCII folder; "Odín" only in prose)
+│   └── odin/                     ← Moderation (ASCII folder; "Odin" in prose)
 └── tareas/
     ├── README.md                 ← open work board (one .md per task)
     └── *.md
@@ -210,14 +209,14 @@ working `/ping`, `scripts/`, `tests/`, `i18n/`, `logs/`, `reports/`.
 
 ## 4. Root documents (adapted from `home-lab`)
 
-### 4.1 `README.md` (Spanish, human)
+### 4.1 `README.md` (English, human)
 
-Keeps the style of `home-lab/README.md`: opening paragraph, **Documentos maestros** table,
-**Estructura del repositorio** tree, bot table (instead of hosts), summarized **Reglas para
-agentes** linking to `AGENTS.md`. Everything network/SSH/K3s-specific is dropped. Content:
+Keeps the style of `home-lab/README.md`: opening paragraph, core documents table, repository
+structure tree, bot table (instead of hosts), and summarized agent rules linking to `AGENTS.md`.
+Everything network/SSH/K3s-specific is dropped. Content:
 
 1. What it is: Discord bot monorepo (Python 3.14 + uv), one per folder, common `discord_core`.
-2. Bot table: `Heimdal` (onboarding) · `Odín` (moderation) · `_template`.
+2. Bot table: `Heimdal` (onboarding) · `Odin` (moderation) · `_template`.
 3. Quickstart: `uv sync` → copy `.env.example` → `bash bots/heimdal/scripts/sync-commands.sh` → `bash bots/heimdal/scripts/run-dev.sh` → tunnel → paste URL into the Developer Portal.
 4. Links: `docs/architecture.md`, `docs/developer-portal.md`, `tareas/`, `discord-docs` skill.
 5. A one-line note that all code and technical docs are in English (§1.4).
@@ -244,7 +243,7 @@ New repo-specific rules:
 - One bot ↔ one Application ID; never share tokens between bots.
 - Before answering Discord API questions, use the `discord-docs` skill (local cache first).
 - Logs → nearest `logs/`; script outputs/audits → nearest `reports/`; both gitignored except `.gitkeep`.
-- Root `README.md` is Spanish (human entry point); this file is English; match the language of the file you edit.
+- Root `README.md` and this file are English technical documentation.
 
 ### 4.3 `.cursor/rules/discord-bot.mdc` (always-on, ≤ 15 lines)
 
@@ -404,7 +403,7 @@ detect upstream changes (prints a table; `reports/` does not apply, it is repo-l
 | Topic | Risk | Proposal |
 |-------|------|----------|
 | HTTP vs Gateway for onboarding | Automatic welcome on join needs Gateway + privileged intent `GUILD_MEMBERS` (approval once the bot exceeds 100 servers; on your own server toggling it in the Portal is enough) | HTTP base + manual `/welcome`; Gateway as a documented extension |
-| Folder name `odin` vs `Odín` | Accents in paths/Python packages break imports and shells | Folder and package `odin`; "Odín" only in prose |
+| Folder name `odin` vs `Odin` | Accents in paths/Python packages break imports and shells | Folder and package `odin`; "Odin" in prose |
 | English-first Discord strings | Spanish-speaking members see English if the client locale is not `es-ES` (Discord picks localization by user locale) | `es-ES` localizations shipped from day one; `es-419` added as a follow-up task |
 | Public endpoint | Discord validates the endpoint when saved and audits signatures periodically; downtime → Discord removes the URL and emails you | Healthcheck + stable deployment task in `home-lab` (Traefik/Cloudflare) |
 | Global command `PUT` | Overwrites the full set: commands not included are deleted | Sync script always prints a diff and requires `--yes` for global |

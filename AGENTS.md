@@ -2,7 +2,7 @@
 
 **Last modified:** 2026-09-06 (foundations: `discord_core`, Heimdal, Odin, `discord-docs` skill)
 
-Human intro + repo map (Spanish): [README.md](README.md).
+Human introduction and repository map: [README.md](README.md).
 Roadmap / phases: [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md).
 Architecture: [docs/architecture.md](docs/architecture.md).
 Developer Portal checklist: [docs/developer-portal.md](docs/developer-portal.md).
@@ -16,7 +16,7 @@ Official Discord docs (skill): [.cursor/skills/discord-docs/SKILL.md](.cursor/sk
 
 - **RULE:** Show **last modified** date at top; bump when you change this file.
 - **RULE:** Write **English** only here.
-- **RULE:** **English-only code**: identifiers, comments, docstrings, tests, log/exception messages, CLI help, env var names, JSONL keys, commit messages, and every technical doc (`AGENTS.md`, `docs/`, bot READMEs, `tareas/`, skills, rules). Only the root `README.md` is Spanish (human entry point). Non-English code is a **blocker**, not a nit.
+- **RULE:** **English-only code**: identifiers, comments, docstrings, tests, log/exception messages, CLI help, env var names, JSONL keys, commit messages, and every technical doc (`AGENTS.md`, `docs/`, bot READMEs, `tareas/`, skills, rules). The root `README.md` is also English. Non-English code is a **blocker**, not a nit.
 - **RULE:** Discord-facing strings (command names/descriptions, buttons, modal titles, messages) are authored in **`en-US`** and localized through `name_localizations` / `description_localizations` and the bot's `i18n/<locale>.json` (`es-ES` shipped). No Spanish literals inline in handlers.
 - **RULE:** New Python → **uv** only, **Python 3.14** (`requires-python = "==3.14.*"`), direct deps pinned **`==`**, one `uv.lock` at repo root (commit it). No `pip install`, no version ranges.
 - **RULE:** **Never** commit `.env`, tokens, or real app public keys. `.env.example` holds placeholders only. Observed gitignored: `.env*`, `**/logs/*`, `**/reports/*`, `docs/discord/`.
@@ -26,7 +26,7 @@ Official Discord docs (skill): [.cursor/skills/discord-docs/SKILL.md](.cursor/sk
 - **RULE:** Interaction handlers answer within **3 s** or are declared `defer=True` (router ACKs, runs later, edits original). Token lives 15 min.
 - **RULE:** Before answering Discord API questions or adding API calls, use the **`discord-docs` skill**: local mirror `docs/discord/` → fetch script → web last. Cite the page. Do not invent endpoints, enums, or limits.
 - **RULE:** Logs → the bot's `logs/`; script/audit outputs → the bot's `reports/`; both gitignored except `.gitkeep` / `README.md`.
-- **RULE:** Do not invent paths or commands. Prefer links to source-of-truth docs. Match the language of the file you edit.
+- **RULE:** Do not invent paths or commands. Prefer links to source-of-truth docs. Keep documentation in English, except for intentional Discord localization data.
 
 ---
 
@@ -76,7 +76,7 @@ dependency so `uv sync` installs everything. `bots/_template` is excluded from t
 `logs/.gitkeep` · `reports/.gitkeep` + `README.md`.
 
 Folder and package names are ASCII `snake_case`; CLI/distribution names are kebab-case
-(`bot_template` / `bot-template`). Accented names ("Odín") appear only in prose.
+(`bot_template` / `bot-template`). Use the ASCII name "Odin" in prose.
 
 ### Handlers
 
