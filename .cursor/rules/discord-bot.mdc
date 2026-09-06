@@ -4,7 +4,7 @@ alwaysApply: true
 ---
 
 - Read `AGENTS.md` before non-trivial work; roadmap in `PLAN-IMPLEMENTACION.md`.
-- **English only** for code, comments, docstrings, tests, logs, commits and technical docs. Root `README.md` is the only Spanish file. Discord-facing strings: `en-US` default + `es-ES` in the bot's `i18n/`.
+- **English only** for code, comments, docstrings, tests, logs, commits and technical docs, including the root `README.md`. Discord-facing strings: `en-US` default + `es-ES` in the bot's `i18n/`.
 - Python via **uv** only, `==3.14.*`, deps pinned `==`, single root `uv.lock`. Never `pip install`.
 - Never write real tokens/keys anywhere but `.env` (gitignored). `.env.example` = placeholders.
 - Handlers answer in **3 s** or use `@router.command(..., defer=True)`; build payloads with `discord_core.responses`.
