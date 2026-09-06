@@ -26,7 +26,9 @@ Command payloads: `uv run odin list-commands`.
 
 ## Variables
 
-See [`.env.example`](.env.example). Shared variables: [`bots/_template/README.md`](../_template/README.md#variables).
+See [`.env.example`](.env.example). Shared variables: [`bots/_template/README.md`](../_template/README.md#variables)
+(`DISCORD_DEV_GUILD_ID` = test guild for command sync; `DISCORD_PROD_GUILD_ID` = production
+guild, same token, target with `--guild`).
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -53,6 +55,7 @@ uv sync
 cp bots/odin/.env.example bots/odin/.env            # fill it
 bash bots/odin/scripts/smoke-test.sh                # offline self-test
 bash bots/odin/scripts/sync-commands.sh             # commands → DISCORD_DEV_GUILD_ID
+# bash bots/odin/scripts/sync-commands.sh --guild <DISCORD_PROD_GUILD_ID>
 bash bots/odin/scripts/run-dev.sh                   # http://127.0.0.1:8001/interactions
 bash _shared/scripts/dev-tunnel.sh 8001             # public URL → Developer Portal
 uv run pytest bots/odin

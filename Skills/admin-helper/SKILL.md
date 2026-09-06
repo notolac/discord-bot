@@ -34,8 +34,9 @@ Validate **before every API call**. Stop if missing.
 | Variable | Purpose |
 |----------|---------|
 | `DISCORD_BOT_TOKEN` | Bot token (`Authorization: Bot <token>`). One bot ↔ one token. |
-| `DISCORD_GUILD_ID` | Default guild snowflake (optional) |
-| `DISCORD_DEV_GUILD_ID` | Fallback default guild (optional) |
+| `DISCORD_GUILD_ID` | Default guild snowflake (optional). Overrides the dev fallback. |
+| `DISCORD_DEV_GUILD_ID` | Test guild; implicit fallback if `--guild` / `DISCORD_GUILD_ID` are unset. |
+| `DISCORD_PROD_GUILD_ID` | Production guild (optional). **Never** an implicit default — pass `--guild` with this value. |
 
 `--env-file` loads `KEY=VALUE` **without overriding** variables already in the environment.
 Never print the token. Never commit `.env`.
@@ -91,8 +92,10 @@ Channel `type` names: `text` 0 · `voice` 2 · `category` 4 · `announcement` 5 
 ([channel types](https://docs.discord.com/developers/resources/channel#channel-object-channel-types)).
 Name 1–100 characters. `--parent` is a category snowflake. Community Rules / Updates channels cannot be deleted.
 
-Guild id: positional (most list commands) or `--guild` / `DISCORD_GUILD_ID` / `DISCORD_DEV_GUILD_ID`.
-`member` and `members-search` take the user/query only — guild from `--guild` or env.
+Guild id: positional (most list commands) or `--guild` / `DISCORD_GUILD_ID` /
+`DISCORD_DEV_GUILD_ID`. To hit production, pass `--guild` with `DISCORD_PROD_GUILD_ID`
+(do not rely on env fallback). `member` and `members-search` take the user/query only —
+guild from `--guild` or env.
 
 ## Member lists vs privileged intent
 
@@ -127,7 +130,7 @@ rules (same token, User-Agent, 429 handling, `--yes` for writes). Never invent p
 
 ```
 - [ ] Token via env / --env-file; never printed
-- [ ] Correct guild snowflake
+- [ ] Correct guild snowflake (dev fallback vs explicit `--guild` for `DISCORD_PROD_GUILD_ID`)
 - [ ] Reads: run CLI, summarize, cite docs page
 - [ ] Member enumeration: intent on, or use search / get-by-id / counts
 - [ ] Writes: user said yes in chat, then --yes, then --reason when useful

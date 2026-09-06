@@ -11,8 +11,10 @@ Requires Python >= 3.10 (repo standard: 3.14 via uv). Prefer the wrapper:
 
 Credentials:
     DISCORD_BOT_TOKEN     bot token (required)
-    DISCORD_GUILD_ID      default guild (optional)
-    DISCORD_DEV_GUILD_ID  fallback default guild (optional)
+    DISCORD_GUILD_ID       default guild (optional)
+    DISCORD_DEV_GUILD_ID   fallback default guild (optional; test server)
+    DISCORD_PROD_GUILD_ID  production guild (optional; never an implicit default —
+                           pass --guild with this value)
     --env-file PATH       load KEY=VALUE from a bot ``.env`` (does not override
                           variables already set in the environment)
 
@@ -146,7 +148,10 @@ def require_token() -> str:
 
 
 def resolve_guild(cli_guild: str | None, positional: str | None = None) -> str:
-    """Resolve guild id: positional → ``--guild`` → env defaults."""
+    """Resolve guild id: positional → ``--guild`` → ``DISCORD_GUILD_ID`` → ``DISCORD_DEV_GUILD_ID``.
+
+    ``DISCORD_PROD_GUILD_ID`` is never an implicit default; pass it with ``--guild``.
+    """
     for candidate in (
         positional,
         cli_guild,
@@ -156,7 +161,8 @@ def resolve_guild(cli_guild: str | None, positional: str | None = None) -> str:
         if candidate:
             return candidate
     die(
-        "missing guild id: pass it as an argument, --guild, DISCORD_GUILD_ID, or DISCORD_DEV_GUILD_ID"
+        "missing guild id: pass it as an argument, --guild, DISCORD_GUILD_ID, or "
+        "DISCORD_DEV_GUILD_ID (DISCORD_PROD_GUILD_ID is never an implicit default)"
     )
 
 

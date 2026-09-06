@@ -1,6 +1,6 @@
 # AGENTS — LLM only
 
-**Last modified:** 2026-09-06 (admin-helper skill: guild admin CLI for members/channels)
+**Last modified:** 2026-09-06 (`DISCORD_DEV_GUILD_ID` + `DISCORD_PROD_GUILD_ID` in `.env`)
 
 Human introduction and repository map: [README.md](README.md).
 Roadmap / phases: [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md).
@@ -22,7 +22,7 @@ Install into IDE paths: [`Skills/install_skills.sh`](Skills/install_skills.sh).
 - **RULE:** New Python → **uv** only, **Python 3.14** (`requires-python = "==3.14.*"`), direct deps pinned **`==`**, one `uv.lock` at repo root (commit it). No `pip install`, no version ranges.
 - **RULE:** **Never** commit `.env`, tokens, or real app public keys. `.env.example` holds placeholders only. Observed gitignored: `.env*`, `**/logs/*`, `**/reports/*`, `docs/discord/`, `Skills/*/.install-manifest`, `.cursor/skills/`, `.github/skills/`, `.opencode/skills/`, `.opencode/commands/`, `.claude/skills/`, `.agents/skills/`.
 - **RULE:** **Destructive Discord ops need explicit user yes** before running: `/purge`, ban/kick, **global** command sync (bulk `PUT` deletes commands not in the list — CLI refuses without `--yes`), deleting commands, changing bot permissions/intents/endpoint URL in the Portal, and **admin-helper** `channel-create` / `channel-edit` / `channel-move` / `channel-delete`.
-- **RULE:** Register commands to the **dev guild** first (`DISCORD_DEV_GUILD_ID`, instant). Global only when the user asks.
+- **RULE:** Register commands to the **dev guild** first (`DISCORD_DEV_GUILD_ID`, instant). The production guild snowflake is `DISCORD_PROD_GUILD_ID` in the same `.env` (same token; never an implicit default — pass `--guild`). Global only when the user asks.
 - **RULE:** One bot ↔ one Application ID ↔ one token. Never share tokens between bots.
 - **RULE:** Interaction handlers answer within **3 s** or are declared `defer=True` (router ACKs, runs later, edits original). Token lives 15 min.
 - **RULE:** Before answering Discord API questions or adding API calls, use the **`discord-docs` skill**: local mirror `docs/discord/` → fetch script → web last. Cite the page. Do not invent endpoints, enums, or limits.
@@ -115,6 +115,7 @@ bash _shared/scripts/dev-tunnel.sh 8000                               # cloudfla
 bash _shared/scripts/new-bot.sh thor "Events bot"                     # scaffold + register in workspace
 python Skills/discord-docs/scripts/fetch_discord_docs.py [--all|--check|<slug>]
 ./Skills/admin-helper/scripts/admin_helper --env-file bots/<bot>/.env --json me
+./Skills/admin-helper/scripts/admin_helper --env-file bots/<bot>/.env --guild PROD_ID --json channels
 ./Skills/install_skills.sh --auto --skill admin-helper                # symlink into IDE discovery paths
 ```
 

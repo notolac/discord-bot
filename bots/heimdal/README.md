@@ -26,7 +26,9 @@ Command payloads: `uv run heimdal list-commands`.
 ## Variables
 
 See [`.env.example`](.env.example). Shared variables are documented in
-[`bots/_template/README.md`](../_template/README.md#variables).
+[`bots/_template/README.md`](../_template/README.md#variables) (`DISCORD_DEV_GUILD_ID` =
+test guild for command sync; `DISCORD_PROD_GUILD_ID` = production guild, same token,
+target with `--guild`).
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -42,6 +44,7 @@ uv sync
 cp bots/heimdal/.env.example bots/heimdal/.env      # fill it
 bash bots/heimdal/scripts/smoke-test.sh             # offline self-test
 bash bots/heimdal/scripts/sync-commands.sh          # commands → DISCORD_DEV_GUILD_ID
+# bash bots/heimdal/scripts/sync-commands.sh --guild <DISCORD_PROD_GUILD_ID>
 bash bots/heimdal/scripts/run-dev.sh                # http://127.0.0.1:8000/interactions
 bash _shared/scripts/dev-tunnel.sh 8000             # public URL → Developer Portal
 uv run pytest bots/heimdal

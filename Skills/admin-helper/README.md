@@ -35,7 +35,8 @@ Use the bot that is **already in** the target guild(s). One Application ID ↔ o
 
 ```bash
 export DISCORD_BOT_TOKEN="…"           # or: --env-file bots/heimdal/.env
-export DISCORD_GUILD_ID="…"            # optional default
+export DISCORD_GUILD_ID="…"            # optional default (overrides DISCORD_DEV_GUILD_ID)
+# DISCORD_PROD_GUILD_ID lives in the bot .env; pass it with --guild (never implicit)
 ```
 
 The bot needs guild permissions matching the action: `VIEW_CHANNEL` to list channels,
@@ -57,6 +58,7 @@ go **before** the subcommand.
 ./Skills/admin-helper/scripts/admin_helper --env-file bots/heimdal/.env guilds
 ./Skills/admin-helper/scripts/admin_helper --guild GUILD_ID channels
 ./Skills/admin-helper/scripts/admin_helper --guild GUILD_ID members-report --format csv
+# production: --guild <DISCORD_PROD_GUILD_ID from the bot .env>  (not the implicit default)
 ```
 
 | Command | Writes to Discord? |

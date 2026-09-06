@@ -2,7 +2,8 @@
 
 Subcommands:
 * ``serve``          — run the interactions HTTP server (uvicorn).
-* ``sync-commands``  — diff + bulk ``PUT`` commands to the dev guild (default) or globally.
+* ``sync-commands``  — diff + bulk ``PUT`` commands to ``DISCORD_DEV_GUILD_ID`` (default)
+  or ``--guild`` / globally. ``DISCORD_PROD_GUILD_ID`` is never the implicit target.
 * ``list-commands``  — print the local command payloads as JSON.
 * ``smoke``          — offline self-test: signed PING → PONG and an unknown command → ephemeral.
 
@@ -52,7 +53,9 @@ def run_cli(
     sync = sub.add_parser("sync-commands", help="register commands (guild by default)")
     scope = sync.add_mutually_exclusive_group()
     scope.add_argument(
-        "--guild", metavar="GUILD_ID", help="target guild (default: DISCORD_DEV_GUILD_ID)"
+        "--guild",
+        metavar="GUILD_ID",
+        help="target guild (default: DISCORD_DEV_GUILD_ID; prod: pass DISCORD_PROD_GUILD_ID)",
     )
     scope.add_argument(
         "--global", dest="global_scope", action="store_true", help="register globally"
@@ -100,7 +103,10 @@ def run_cli(
         _check_router_coverage(router, commands)
         guild_id = None if args.global_scope else (args.guild or settings.discord_dev_guild_id)
         if guild_id is None and not args.global_scope:
-            log.error("no_guild", hint="set DISCORD_DEV_GUILD_ID, pass --guild, or use --global")
+            log.error(
+                "no_guild",
+                hint="set DISCORD_DEV_GUILD_ID, pass --guild (DISCORD_PROD_GUILD_ID is never default), or use --global",
+            )
             return 2
         return asyncio.run(
             _sync(settings, commands, guild_id=guild_id, dry_run=args.dry_run, confirm=args.yes)

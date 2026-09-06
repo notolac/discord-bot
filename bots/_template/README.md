@@ -29,7 +29,8 @@ Copy `.env.example` to `.env` and fill from the Developer Portal (see `docs/deve
 | `DISCORD_APP_ID` | yes | Application ID |
 | `DISCORD_PUBLIC_KEY` | yes | Public key for signature verification |
 | `DISCORD_BOT_TOKEN` | yes | Bot token (never commit) |
-| `DISCORD_DEV_GUILD_ID` | dev | Test server for guild command registration |
+| `DISCORD_DEV_GUILD_ID` | dev | Test server; default target for `sync-commands` |
+| `DISCORD_PROD_GUILD_ID` | no | Production server (same bot token). Never an implicit default — pass `--guild` |
 | `PORT` | no | HTTP port (default 8000) |
 
 ## Run

@@ -21,7 +21,11 @@ class DiscordSettings(BaseSettings):
     discord_public_key: str = Field(description="Public Key used to verify interaction signatures")
     discord_bot_token: SecretStr = Field(description="Bot token (Bot page › Reset Token)")
     discord_dev_guild_id: str | None = Field(
-        default=None, description="Test server id; guild commands are registered here in dev"
+        default=None, description="Test server id; default target for guild command sync"
+    )
+    discord_prod_guild_id: str | None = Field(
+        default=None,
+        description="Production server id (same token). Never an implicit sync/admin default",
     )
 
     bot_name: str = Field(default="bot", description="Used for log file names and User-Agent")

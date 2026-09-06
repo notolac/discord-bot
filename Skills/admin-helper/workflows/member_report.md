@@ -10,7 +10,8 @@ roles, bot/pending flags.
 
 ## Steps
 
-1. Confirm guild snowflake (`guilds` or `DISCORD_GUILD_ID` / `DISCORD_DEV_GUILD_ID`).
+1. Confirm guild snowflake (`guilds`, `--guild`, `DISCORD_GUILD_ID`, or `DISCORD_DEV_GUILD_ID`).
+   Production is `DISCORD_PROD_GUILD_ID` — pass it with `--guild`; it is never the implicit default.
 2. Smoke-test the token: `admin_helper --env-file bots/<bot>/.env --json me`.
 3. If a **full** roster is required, `members-report` needs **Server Members Intent**. If the
    API returns 403, stop, explain the intent, and offer:

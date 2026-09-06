@@ -65,7 +65,7 @@ uv sync                                          # install the whole workspace
 uv run ruff check . && uv run pytest -q          # quality checks
 cp bots/heimdal/.env.example bots/heimdal/.env   # fill from the Developer Portal
 bash bots/heimdal/scripts/smoke-test.sh          # offline endpoint self-test
-bash bots/heimdal/scripts/sync-commands.sh       # commands → test server (DISCORD_DEV_GUILD_ID)
+bash bots/heimdal/scripts/sync-commands.sh       # commands → DISCORD_DEV_GUILD_ID (not prod)
 bash bots/heimdal/scripts/run-dev.sh             # http://127.0.0.1:8000/interactions
 bash _shared/scripts/dev-tunnel.sh 8000          # public URL → Portal › Interactions Endpoint URL
 ```
@@ -124,5 +124,5 @@ The complete rules are in **[AGENTS.md](AGENTS.md)**:
 - **uv** + Python **3.14**, dependencies pinned with `==`, and one `uv.lock`.
 - Never commit `.env` files, tokens, or real keys.
 - Destructive operations (purge, ban, global command sync that deletes commands, Portal changes, and **admin-helper** channel create/edit/delete) require **explicit user approval**.
-- Register commands to the test server first; use global registration only when requested.
+- Register commands to the test server first (`DISCORD_DEV_GUILD_ID`). Production is `DISCORD_PROD_GUILD_ID` in the same `.env` — pass `--guild`; it is never the implicit default. Global registration only when requested.
 - For API questions, use the `discord-docs` skill: local mirror first, then download, then web.
