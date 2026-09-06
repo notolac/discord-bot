@@ -1,0 +1,60 @@
+[project]
+name = "discord-bot-workspace"
+version = "0.0.0"
+description = "uv workspace root for the discord-bot monorepo (not a package)"
+requires-python = "==3.14.*"
+# Every workspace member is listed here so a plain `uv sync` installs the whole repo.
+# `_shared/scripts/new-bot.sh` appends new bots to both lists below.
+dependencies = [
+    "discord-core",
+    "heimdal",
+    "odin",
+]
+
+[tool.uv.workspace]
+members = ["_shared/discord_core", "bots/*"]
+exclude = ["bots/_template"]
+
+[tool.uv.sources]
+discord-core = { workspace = true }
+heimdal = { workspace = true }
+odin = { workspace = true }
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "ruff==0.16.6",
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+extend-exclude = ["bots/_template"]
+
+[tool.ruff.lint]
+extend-select = ["I", "N", "D", "UP", "B"]
+ignore = [
+    "D100", # module docstring — not required for every module
+    "D104", # package docstring
+    "D105", # magic method docstring
+    "D107", # __init__ docstring
+    "D203", # conflicts with D211
+    "D213", # conflicts with D212
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["discord_core", "bot_template", "heimdal", "odin"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["_shared/discord_core/tests", "bots/heimdal/tests", "bots/odin/tests"]

@@ -1,0 +1,23 @@
+[project]
+name = "heimdal"
+version = "0.1.0"
+description = "Heimdal — onboarding bot (welcome, rules acceptance, interest roles, introductions)"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = ["discord-core"]
+
+[project.optional-dependencies]
+gateway = ["discord.py==2.7.1"]
+
+[project.scripts]
+heimdal = "heimdal.__main__:main"
+
+[tool.uv.sources]
+discord-core = { workspace = true }
+
+[build-system]
+requires = ["hatchling==1.32.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/heimdal"]

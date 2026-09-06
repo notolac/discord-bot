@@ -1,0 +1,20 @@
+{
+  "common.guild_only": "Este comando solo funciona dentro de un servidor.",
+  "warn.done": "{target} ha sido avisado: {reason}",
+  "warn.mod_notice": "⚠️ {moderator} avisó a {target}: {reason}",
+  "timeout.done": "{target} está silenciado {minutes} min (termina {until}).",
+  "timeout.failed": "No se pudo aplicar el silencio: {error}",
+  "timeout.mod_notice": "🔇 {moderator} silenció a {target} durante {minutes} min (termina {until}). Motivo: {reason}",
+  "purge.confirm": "¿Borrar los últimos **{count}** mensajes de este canal? No se puede deshacer.",
+  "purge.confirm_button": "Borrar {count}",
+  "purge.cancel_button": "Cancelar",
+  "purge.cancelled": "Limpieza cancelada.",
+  "purge.done": "Se han borrado {deleted} mensajes.",
+  "purge.failed": "La limpieza ha fallado: {error}",
+  "report.not_configured": "Los reportes aún no están configurados en este servidor.",
+  "report.missing": "No he podido leer ese mensaje.",
+  "report.done": "Gracias, se ha avisado a los moderadores.",
+  "report.mod_notice": "🚩 {reporter} reportó un mensaje de {author}: {link}\n> {excerpt}",
+  "history.empty": "No hay registros de moderación para {target}.",
+  "history.header": "Últimos {count} registro(s) de {target}:"
+}

@@ -1,0 +1,20 @@
+{
+  "common.guild_only": "This command only works inside a server.",
+  "warn.done": "{target} has been warned: {reason}",
+  "warn.mod_notice": "⚠️ {moderator} warned {target}: {reason}",
+  "timeout.done": "{target} is timed out for {minutes} min (ends {until}).",
+  "timeout.failed": "Could not apply the timeout: {error}",
+  "timeout.mod_notice": "🔇 {moderator} timed out {target} for {minutes} min (ends {until}). Reason: {reason}",
+  "purge.confirm": "Delete the last **{count}** messages in this channel? This cannot be undone.",
+  "purge.confirm_button": "Delete {count}",
+  "purge.cancel_button": "Cancel",
+  "purge.cancelled": "Purge cancelled.",
+  "purge.done": "Deleted {deleted} messages.",
+  "purge.failed": "Purge failed: {error}",
+  "report.not_configured": "Reports are not configured on this server yet.",
+  "report.missing": "I could not read that message.",
+  "report.done": "Thanks, the moderators have been notified.",
+  "report.mod_notice": "🚩 {reporter} reported a message by {author}: {link}\n> {excerpt}",
+  "history.empty": "No moderation records for {target}.",
+  "history.header": "Last {count} record(s) for {target}:"
+}

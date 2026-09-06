@@ -1,0 +1,23 @@
+{
+  "welcome.title": "## Welcome to the server",
+  "welcome.body": "Hi {user}! Please read the rules and press the button below to unlock the community.",
+  "welcome.accept_button": "I accept the rules",
+  "welcome.rules_link": "Read the rules",
+  "welcome.not_for_you": "This button is meant for {user}. Ask a moderator to run `/welcome` for you.",
+  "welcome.accepted": "{user} accepted the rules. Welcome aboard!",
+  "welcome.role_failed": "I could not assign your role. A moderator has been notified.",
+  "roles.not_configured": "No interest roles are configured yet.",
+  "roles.prompt": "Pick the topics you care about:",
+  "roles.placeholder": "Select roles…",
+  "roles.guild_only": "Roles can only be assigned inside a server.",
+  "roles.none": "No roles were assigned.",
+  "roles.granted": "Roles assigned: {roles}",
+  "introduce.title": "Introduce yourself",
+  "introduce.name_label": "How should we call you?",
+  "introduce.about_label": "Tell us about yourself",
+  "introduce.interests_label": "Interests (optional)",
+  "introduce.card_title": "## {user} joined the crew as **{name}**",
+  "introduce.card_interests": "**Interests:** {interests}",
+  "introduce.posted_elsewhere": "Thanks! Your introduction was posted in {channel}.",
+  "introduce.post_failed": "I could not post your introduction. Please try again later."
+}
