@@ -61,6 +61,11 @@ The bot's own role must sit **above** any role it assigns (`Manage Roles`) or an
 out (`Moderate Members`). Otherwise the API returns `50013 Missing Permissions`, which the bots
 report ephemerally.
 
+Heimdal must also sit **below** roles it must never grant (`admin`, `moderator`, other bots).
+PROD order (2026-09-06): `admin` → Odin → `moderator` → Heimdal → `organizer` → `speaker` →
+`member` → Academia → Startups → Enterprises. Details:
+[bots/heimdal/README.md](../bots/heimdal/README.md#role-hierarchy-prod).
+
 ## 7. Rotation
 
 If a token or public key changes: update `.env`, restart the bot, and re-save the endpoint URL if

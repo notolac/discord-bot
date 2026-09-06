@@ -24,7 +24,7 @@ a minimal shared library (`discord_core`). All code and technical documentation 
 
 | Bot | Purpose | Folder | Status |
 |-----|-----------|---------|--------|
-| **Heimdal** | Onboarding: welcome with rules acceptance, interest roles, and an introduction modal | [bots/heimdal/](bots/heimdal/README.md) | Base implemented, not deployed |
+| **Heimdal** | Onboarding: rules button → `member`; organizer / speaker / Startups / Enterprises only after staff Approve in `#staff`; cosmetic `/roles`; `/introduce` | [bots/heimdal/](bots/heimdal/README.md) | Base implemented, not deployed |
 | **Odin** | Moderation: `/warn`, `/timeout`, `/purge` with confirmation, "Report message", "View history", and a JSONL log | [bots/odin/](bots/odin/README.md) | Base implemented, not deployed |
 | `_template` | Template for new bots (`/ping`) | [bots/_template/](bots/_template/README.md) | — |
 
@@ -50,7 +50,7 @@ discord-bot/
 │   └── scripts/               ← new-bot.sh · dev-tunnel.sh · GUIDE.md
 ├── bots/
 │   ├── _template/             ← template
-│   ├── heimdal/               ← onboarding
+│   ├── heimdal/               ← onboarding (member + staff-approved claimed roles)
 │   └── odin/                  ← moderation
 └── tareas/                    ← open-work board
 ```

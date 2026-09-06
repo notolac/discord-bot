@@ -7,7 +7,8 @@ Subcommands:
 * ``list-commands``  — print the local command payloads as JSON.
 * ``smoke``          — offline self-test: signed PING → PONG and an unknown command → ephemeral.
 
-Every bot's ``__main__`` calls :func:`run_cli`.
+Each bot's ``__main__`` calls :func:`run_cli`. ``serve --reload`` uses
+``<bot>.asgi:app`` (uvicorn requires an import string for the reloader).
 """
 
 from __future__ import annotations
@@ -89,14 +90,25 @@ def run_cli(
     if args.cmd == "serve":
         import uvicorn
 
-        app = create_app(settings, router)
-        uvicorn.run(
-            app,
-            host=args.host or settings.host,
-            port=args.port or settings.port,
-            reload=args.reload,
-            log_config=None,
-        )
+        host = args.host or settings.host
+        port = args.port or settings.port
+        # Reload needs an import string, not an app instance (uvicorn exits 3 otherwise).
+        if args.reload:
+            reload_dirs: list[str] = []
+            if bot_root is not None:
+                src = bot_root / "src"
+                reload_dirs.append(str(src if src.is_dir() else bot_root))
+            uvicorn.run(
+                f"{bot_name}.asgi:app",
+                factory=True,
+                host=host,
+                port=port,
+                reload=True,
+                reload_dirs=reload_dirs or None,
+                log_config=None,
+            )
+        else:
+            uvicorn.run(create_app(settings, router), host=host, port=port, log_config=None)
         return 0
 
     if args.cmd == "sync-commands":

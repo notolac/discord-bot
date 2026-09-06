@@ -1,7 +1,7 @@
 [project]
 name = "heimdal"
 version = "0.1.0"
-description = "Heimdal — onboarding bot (welcome, rules acceptance, interest roles, introductions)"
+description = "Heimdal — onboarding bot (rules → member, staff-approved claimed roles, introductions)"
 readme = "README.md"
 requires-python = "==3.14.*"
 dependencies = ["discord-core"]

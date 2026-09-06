@@ -9,17 +9,23 @@ from discord_core.i18n import Localizer
 from heimdal import BOT_ROOT
 from heimdal.settings import Settings
 
+STAFF_USER = "6006"
+APPROVER_ROLE = "900"
+MOD_ROLE = "901"
+
 
 class FakeDiscord:
     """Records every API call and answers 200/204 unless a status override is given."""
 
     def __init__(self) -> None:
         self.calls: list[tuple[str, str, Any]] = []
+        self.audit_reasons: list[str | None] = []
         self.fail_paths: dict[str, int] = {}
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content) if request.content else None
         self.calls.append((request.method, request.url.path, body))
+        self.audit_reasons.append(request.headers.get("x-audit-log-reason"))
         for fragment, status in self.fail_paths.items():
             if fragment in request.url.path:
                 return httpx.Response(
@@ -45,6 +51,13 @@ def settings() -> Settings:
         heimdal_member_role_id="777",
         heimdal_interest_roles="Gaming:111,Dev:222",
         heimdal_rules_url="https://example.com/rules",
+        heimdal_approval_channel_id="5555",
+        heimdal_approver_role_ids=f"{APPROVER_ROLE},{MOD_ROLE}",
+        heimdal_organizer_role_id="800",
+        heimdal_speaker_role_id="801",
+        heimdal_startups_role_id="802",
+        heimdal_enterprises_role_id="803",
+        heimdal_denied_role_ids=f"{APPROVER_ROLE},{MOD_ROLE},902,903",
         _env_file=None,  # type: ignore[call-arg]
     )
 
@@ -75,20 +88,38 @@ def _command(
 
 
 def _component(
-    custom_id: str, values: list[str] | None = None, *, user_id: str = "5005"
+    custom_id: str,
+    values: list[str] | None = None,
+    *,
+    user_id: str = "5005",
+    roles: list[str] | None = None,
+    permissions: str | None = None,
+    guild_id: str | None = "3003",
+    with_member: bool = True,
 ) -> dict[str, Any]:
-    return {
+    payload: dict[str, Any] = {
         "id": "1001",
         "application_id": "2002",
         "type": 3,
         "token": "tok",
         "version": 1,
-        "guild_id": "3003",
         "channel_id": "4004",
-        "member": {"user": {"id": user_id, "username": "tester"}, "roles": []},
         "message": {"id": "7007"},
         "data": {"custom_id": custom_id, "component_type": 2, "values": values or []},
     }
+    if guild_id is not None:
+        payload["guild_id"] = guild_id
+    if with_member:
+        member: dict[str, Any] = {
+            "user": {"id": user_id, "username": "tester"},
+            "roles": roles if roles is not None else [],
+        }
+        if permissions is not None:
+            member["permissions"] = permissions
+        payload["member"] = member
+    else:
+        payload["user"] = {"id": user_id, "username": "tester"}
+    return payload
 
 
 def _modal(custom_id: str, fields: dict[str, str], *, user_id: str = "5005") -> dict[str, Any]:
@@ -119,6 +150,16 @@ def command():
 @pytest.fixture
 def component():
     return _component
+
+
+@pytest.fixture
+def staff_component():
+    def factory(custom_id: str, values: list[str] | None = None) -> dict[str, Any]:
+        return _component(
+            custom_id, values, user_id=STAFF_USER, roles=[APPROVER_ROLE], permissions="0"
+        )
+
+    return factory
 
 
 @pytest.fixture
