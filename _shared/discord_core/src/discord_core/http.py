@@ -182,6 +182,14 @@ class DiscordClient:
         """``POST /channels/{channel}/messages``."""
         return await self.request("POST", f"/channels/{channel_id}/messages", json=data)
 
+    async def edit_message(
+        self, channel_id: str, message_id: str, data: dict[str, Any]
+    ) -> dict[str, Any]:
+        """``PATCH /channels/{channel}/messages/{message}``."""
+        return await self.request(
+            "PATCH", f"/channels/{channel_id}/messages/{message_id}", json=data
+        )
+
     async def get_channel_messages(
         self, channel_id: str, *, limit: int = 50, before: str | None = None
     ) -> list[dict[str, Any]]:

@@ -1,4 +1,4 @@
-"""Heimdal — onboarding bot: welcome, rules acceptance, interest roles, introductions."""
+"""Heimdal — onboarding bot: rules → member, staff-approved claimed roles, introductions."""
 
 from pathlib import Path
 

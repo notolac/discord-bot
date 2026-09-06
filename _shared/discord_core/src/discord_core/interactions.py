@@ -11,7 +11,7 @@ from __future__ import annotations
 from enum import IntEnum, IntFlag
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # --------------------------------------------------------------------------- enums
 
@@ -215,7 +215,9 @@ class SubmittedComponent(_Model):
 class InteractionData(_Model):
     """Union-ish ``data`` payload; fields depend on the interaction type."""
 
-    # APPLICATION_COMMAND / AUTOCOMPLETE
+    # APPLICATION_COMMAND / AUTOCOMPLETE: command snowflake.
+    # MESSAGE_COMPONENT: Components v2 integer component ``id``
+    # (https://docs.discord.com/developers/components/reference#string-select-string-select-interaction-response-structure).
     id: str | None = None
     name: str | None = None
     type: int | None = None
@@ -229,6 +231,14 @@ class InteractionData(_Model):
     components: list[SubmittedComponent] = Field(default_factory=list)
     # shared
     resolved: ResolvedData = Field(default_factory=ResolvedData)
+
+    @field_validator("id", "target_id", "guild_id", mode="before")
+    @classmethod
+    def _coerce_snowflake_or_component_id(cls, value: Any) -> Any:
+        """Accept snowflake strings and the integer component ``id`` Discord sends on selects."""
+        if isinstance(value, int):
+            return str(value)
+        return value
 
 
 class Interaction(_Model):

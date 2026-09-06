@@ -1,10 +1,11 @@
 # Implementation plan — `discord-bot`
 
-**Date:** 2026-09-06 · **Status:** phases 0–6 implemented (foundations); phase 7 (deployment) open — see [`tareas/`](tareas/README.md)
+**Date:** 2026-09-06 · **Status:** phases 0–6 implemented (foundations + Heimdal/Odin base
+commands); phase 7 (deployment) open — see [`tareas/`](tareas/README.md)
 
 Monorepo of Discord bots in **Python 3.14 + uv**, one bot per folder, with a minimal shared
-library built directly on the official API. This document is the roadmap to lay down the
-**foundations** of the repo; it does not yet implement the functional logic of each bot.
+library built directly on the official API. This document is the roadmap for the repo
+foundations; live command behaviour lives in each bot's README.
 
 ## 0. Official sources used (design basis)
 
@@ -177,19 +178,29 @@ bot needs config files (e.g. moderation rules in YAML), add `configs/`.
 
 ### 3.1 Heimdal — Onboarding (the guardian of the bridge)
 
-**Purpose:** receive and guide new members: welcome, rules, verification, self-assigned
-interest roles.
+**Purpose:** receive and guide new members. `member` is self-serve after accepting the rules.
+Claimed affiliation / access roles (organizer, speaker, Startups, Enterprises) need a staff
+Approve card in `#staff`. Cosmetic interests stay on `/roles`. Live details:
+[bots/heimdal/README.md](bots/heimdal/README.md).
 
 | Interaction | Type | Phase | Doc notes |
 |-------------|------|-------|-----------|
-| `/welcome [user]` (es-ES: `/bienvenida`) | CHAT_INPUT | Base | message with Components v2 (`IS_COMPONENTS_V2`) + "I accept the rules" button |
-| Button `rules_accept_<user_id>` | MESSAGE_COMPONENT | Base | `UPDATE_MESSAGE` (7) + assign role via `PUT /guilds/{g}/members/{u}/roles/{r}` |
-| `/roles` | CHAT_INPUT | Base | string select `roles_pick` (multi) → interest role |
-| `/introduce` (es-ES: `/presentarme`) | CHAT_INPUT | Base | opens **modal** (9) with text inputs; `MODAL_SUBMIT` publishes the card |
-| Auto-welcome on join | Gateway `GUILD_MEMBER_ADD` | Extension | requires privileged intent `GUILD_MEMBERS` → document alternative: native Discord Onboarding + manual `/welcome` |
+| `/welcome [user]` (es-ES: `/bienvenida`) | CHAT_INPUT | Base | No user: persistent Components v2 card (`rules_accept`, no target id) + claimed-role select. With user: targeted `rules_accept_<id>`. Staff: `MANAGE_GUILD` |
+| Button `rules_accept` | MESSAGE_COMPONENT | Base | `PUT` **only** the member role onto the **clicker**; public card stays |
+| Button `rules_accept_<user_id>` | MESSAGE_COMPONENT | Base | Same grant if clicker matches encoded id; then `UPDATE_MESSAGE` (7) |
+| `/request-role` (es-ES: `/solicitar-rol`) | CHAT_INPUT | Base | Fixed choices (not a role snowflake) → evidence modal → staff card in `HEIMDAL_APPROVAL_CHANNEL_ID` |
+| Select `role_ask` / buttons `role_ok_` · `role_no_` | MESSAGE_COMPONENT | Base | Enum keys in `custom_id`; Approve is staff-gated; Deny has no `PUT` |
+| `/roles` | CHAT_INPUT | Base | Cosmetic allowlist only (PROD: Academia). Startups/Enterprises are **not** self-serve |
+| `/introduce` (es-ES: `/presentarme`) | CHAT_INPUT | Base | opens **modal** (9); `MODAL_SUBMIT` publishes the card |
+| Auto-welcome on join | Gateway `GUILD_MEMBER_ADD` | Extension | privileged intent `GUILD_MEMBERS`; current path is the persistent `/welcome` card. Task: [`tareas/gateway-member-add.md`](tareas/gateway-member-add.md) |
 
-Bot permissions (guild install): `Send Messages`, `Manage Roles`, `Embed Links`. Scopes: `bot`, `applications.commands`. Contexts: `GUILD` (0).
-`default_member_permissions` for `/welcome`: `MANAGE_GUILD` (`1 << 5`) for staff.
+Bot permissions (guild install): `Send Messages`, `Manage Roles`, `Embed Links`, `View Audit Log`.
+Scopes: `bot`, `applications.commands`. Contexts: `GUILD` (0).
+Never grant `admin` / `moderator` / bot roles. Heimdal's Discord role must stay **below**
+`moderator` and **above** every role it assigns.
+
+`default_member_permissions` for `/welcome`: `MANAGE_GUILD` (`1 << 5`) for staff. `/request-role`
+is usable by `@everyone`.
 
 ### 3.2 Odin — Moderation (the all-seeing)
 
@@ -226,7 +237,7 @@ structure tree, bot table (instead of hosts), and summarized agent rules linking
 Everything network/SSH/K3s-specific is dropped. Content:
 
 1. What it is: Discord bot monorepo (Python 3.14 + uv), one per folder, common `discord_core`.
-2. Bot table: `Heimdal` (onboarding) · `Odin` (moderation) · `_template`.
+2. Bot table: `Heimdal` (onboarding / claimed-role approval) · `Odin` (moderation) · `_template`.
 3. Quickstart: `uv sync` → copy `.env.example` → `bash bots/heimdal/scripts/sync-commands.sh` → `bash bots/heimdal/scripts/run-dev.sh` → tunnel → paste URL into the Developer Portal.
 4. Links: `docs/architecture.md`, `docs/developer-portal.md`, `tareas/`, `discord-docs` skill.
 5. A one-line note that all code and technical docs are in English (§1.4).
@@ -327,7 +338,7 @@ testpaths = ["_shared/discord_core/tests", "bots/*/tests"]
 [project]
 name = "heimdal"
 version = "0.1.0"
-description = "Heimdal — onboarding bot (welcome, rules, roles)"
+description = "Heimdal — onboarding bot (rules → member, staff-approved claimed roles)"
 readme = "README.md"
 requires-python = "==3.14.*"
 dependencies = ["discord-core"]
@@ -359,7 +370,7 @@ build-backend = "hatchling.build"
 | **1. Root docs** | `README.md`, `AGENTS.md`, `.cursor/rules/discord-bot.mdc`, `docs/architecture.md`, `docs/developer-portal.md`, `_shared/scripts/GUIDE.md`, `bots/README.md` | Internal links resolve (`rg` on paths); AGENTS in English and dated |
 | **2. `discord_core`** | Modules §1.2 + tests: Ed25519 signature (valid/invalid vector), `PONG`, router by `custom_id`, command serialization incl. localizations, HTTP client with mocked 429 | `uv run pytest _shared/discord_core` green; `uv run ruff check .` |
 | **3. `bots/_template` + `new-bot.sh`** | Working `/ping` bot end-to-end locally | `bash scripts/smoke-test.sh` sends signed `PING` → `{"type":1}`; signed `/ping` interaction → callback 4 |
-| **4. Heimdal (base)** | §3.1 Base commands, full README, `.env.example`, scripts, `i18n/es-ES` | `sync-commands` to dev guild (diff printed, no global deletes); manual test on a test server |
+| **4. Heimdal (base)** | §3.1: public rules → `member`; `/request-role` + staff Approve; cosmetic `/roles`; `/introduce`; README allowlist + hierarchy | `sync-commands` to dev guild first; pytest + smoke; prod guild only with `--guild` |
 | **5. Odin (base)** | §3.2 Base commands, `reports/` JSONL + format README, `/purge` confirmation | same + unit test for the report log |
 | **6. `discord-docs` skill** | §7 complete, local cache generated | Invoke the skill and resolve a question (e.g. "choices limit") using the local cache only |
 | **7. Deployment (pending, `tareas/`)** | Dockerfile per bot (`uv` multi-stage), dev tunnel, Traefik/Cloudflare route in `home-lab`, `GET /healthz` healthcheck | Out of scope for the foundations; a task is opened |
@@ -420,7 +431,7 @@ detect upstream changes (prints a table; `reports/` does not apply, it is repo-l
 
 | Topic | Risk | Proposal |
 |-------|------|----------|
-| HTTP vs Gateway for onboarding | Automatic welcome on join needs Gateway + privileged intent `GUILD_MEMBERS` (approval once the bot exceeds 100 servers; on your own server toggling it in the Portal is enough) | HTTP base + manual `/welcome`; Gateway as a documented extension |
+| HTTP vs Gateway for onboarding | Automatic welcome on join needs Gateway + privileged intent `GUILD_MEMBERS` (approval once the bot exceeds 100 servers; on your own server toggling it in the Portal is enough) | HTTP base + persistent `/welcome` card (no user id); Gateway remains a documented extension |
 | Folder name `odin` vs `Odin` | Accents in paths/Python packages break imports and shells | Folder and package `odin`; "Odin" in prose |
 | English-first Discord strings | Spanish-speaking members see English if the client locale is not `es-ES` (Discord picks localization by user locale) | `es-ES` localizations shipped from day one; `es-419` added as a follow-up task |
 | Public endpoint | Discord validates the endpoint when saved and audits signatures periodically; downtime → Discord removes the URL and emails you | Healthcheck + stable deployment task in `home-lab` (Traefik/Cloudflare) |

@@ -14,7 +14,8 @@ Discord delivers interactions to an app in exactly **one** of two ways
 | Used by | Every bot in this repo (`discord_core.app`) | Optional `gateway/` module with `discord.py` |
 
 Every bot here runs an HTTP endpoint. When a bot needs events (e.g. Heimdal auto-welcome on
-`GUILD_MEMBER_ADD`), it adds a Gateway client **and** moves its interaction handling to
+`GUILD_MEMBER_ADD` — today a persistent `/welcome` card covers self-serve `member`), it adds a
+Gateway client **and** moves its interaction handling to
 `INTERACTION_CREATE`, because enabling an Interactions Endpoint URL disables Gateway delivery for
 that app. Track it in the bot README under *Decisions*.
 

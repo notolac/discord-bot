@@ -5,7 +5,7 @@ workspace member depending on `discord-core`.
 
 | Bot | Purpose | CLI | Default port | Status |
 |-----|---------|-----|--------------|--------|
-| [heimdal](heimdal/README.md) | Onboarding: `/welcome` + rules button, `/roles`, `/introduce` modal | `uv run heimdal …` | 8000 | Base implemented; not deployed |
+| [heimdal](heimdal/README.md) | Onboarding: public rules → `member`; claimed roles via staff Approve in `#staff`; cosmetic `/roles`; `/introduce` | `uv run heimdal …` | 8000 | Base implemented; not deployed |
 | [odin](odin/README.md) | Moderation: `/warn`, `/timeout`, `/purge` (confirm), *Report message*, *View history*; JSONL audit log | `uv run odin …` | 8001 | Base implemented; not deployed |
 | [_template](_template/README.md) | Scaffold with `/ping` | — | — | Source for `new-bot.sh`; excluded from the workspace |
 

@@ -1,6 +1,6 @@
 # AGENTS — LLM only
 
-**Last modified:** 2026-09-06 (`DISCORD_DEV_GUILD_ID` + `DISCORD_PROD_GUILD_ID` in `.env`)
+**Last modified:** 2026-09-06 (Heimdal: self-serve `member` + staff-approved claimed roles; PROD role order)
 
 Human introduction and repository map: [README.md](README.md).
 Roadmap / phases: [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md).
@@ -41,7 +41,7 @@ verification), sharing one thin library. Python 3.14, uv workspace, pytest, ruff
 | [`_shared/discord_core/`](_shared/discord_core/README.md) | Shared library: security, models, response builders, command sync, router, HTTP client, app factory, settings, logging, i18n, CLI |
 | [`_shared/scripts/`](_shared/scripts/GUIDE.md) | Cross-bot scripts: `new-bot.sh`, `dev-tunnel.sh` |
 | [`Skills/`](Skills/discord-docs/README.md) | Portable Agent Skills (`SKILL.md` per folder) + `install_skills.sh` (`discord-docs`, `admin-helper`) |
-| [`bots/<name>/`](bots/README.md) | One bot per folder (`heimdal` onboarding, `odin` moderation, `_template`) |
+| [`bots/<name>/`](bots/README.md) | One bot per folder (`heimdal` onboarding / claimed-role approval, `odin` moderation, `_template`) |
 | [`docs/`](docs/) | Architecture, Developer Portal checklist, `docs/discord/` mirror (generated) |
 | [`tareas/`](tareas/README.md) | Open work board (one `.md` per task) |
 
@@ -58,7 +58,7 @@ dependency so `uv sync` installs everything. `bots/_template` is excluded from t
 | Create app, keys, intents, install link, endpoint URL | [docs/developer-portal.md](docs/developer-portal.md) |
 | Library modules and responsibilities | [_shared/discord_core/README.md](_shared/discord_core/README.md) |
 | Bot inventory + status | [bots/README.md](bots/README.md) |
-| Heimdal commands / permissions / decisions | [bots/heimdal/README.md](bots/heimdal/README.md) · [design](bots/heimdal/docs/design.md) |
+| Heimdal commands, allowlists, PROD role hierarchy | [bots/heimdal/README.md](bots/heimdal/README.md) · [design](bots/heimdal/docs/design.md) |
 | Odin commands / audit log format / decisions | [bots/odin/README.md](bots/odin/README.md) · [design](bots/odin/docs/design.md) |
 | New bot procedure | [bots/_template/README.md](bots/_template/README.md) · `_shared/scripts/new-bot.sh` |
 | Official Discord facts (enums, limits, endpoints) | skill [SKILL.md](Skills/discord-docs/SKILL.md) · index [index.md](Skills/discord-docs/index.md) · mirror `docs/discord/` |
@@ -74,7 +74,8 @@ dependency so `uv sync` installs everything. `bots/_template` is excluded from t
 ### Per bot (`bots/<name>/`)
 
 `README.md` · `pyproject.toml` · `.env.example` · `src/<name>/` (`commands.py`, `handlers.py`,
-`settings.py`, `__main__.py`, optional `services/`, `gateway/`) · `i18n/` (`en-US.json`, `es-ES.json`)
+`settings.py`, `__main__.py`, `asgi.py` for ``serve --reload``, optional `services/`, `gateway/`,
+Heimdal `roles.py` allowlists) · `i18n/` (`en-US.json`, `es-ES.json`)
 · `scripts/` (`run-dev.sh`, `sync-commands.sh`, `smoke-test.sh`, `README.md`) · `tests/` · `docs/` ·
 `logs/.gitkeep` · `reports/.gitkeep` + `README.md`.
 
@@ -91,6 +92,8 @@ Folder and package names are ASCII `snake_case`; CLI/distribution names are keba
 - Return payloads from `discord_core.responses`; never hand-build dicts in handlers.
 - Discord API calls go through `ctx.client` (`DiscordClient`); catch `DiscordAPIError` and reply
   ephemerally on failure.
+- Heimdal role `PUT`s: only ids from env allowlists after an enum-key map (`heimdal/roles.py`).
+  Never grant a role snowflake that arrived solely from a select, modal, or `custom_id`.
 - Text via `ctx.t("key", interaction, **kwargs)`; keys live in `i18n/en-US.json` (+ `es-ES.json`).
 
 ### Tests
@@ -148,6 +151,13 @@ Same commands with `odin` (default port 8001 in its `.env.example`).
 - `default_member_permissions` is a **string**; `"0"` hides the command from everyone but admins.
 - `bots/_template` renames rely on the literal tokens `bot_template` / `bot-template` /
   `Bot Template`; keep them intact inside the template.
+- Heimdal never `PUT`s a role id that arrived only from the client; map enum keys through env
+  allowlists ([heimdal README](bots/heimdal/README.md#role-allowlist-security)). Discord still
+  allows granting any role **below** the bot — keep Heimdal **below** `moderator`/`admin` and
+  **above** every role it assigns ([hierarchy](bots/heimdal/README.md#role-hierarchy-prod)).
+- `uvicorn --reload` reloads Python; it does **not** reliably reload `.env`. Restart the bot
+  process after `HEIMDAL_*` / `ODIN_*` / `DISCORD_*` changes. Leave the tunnel URL alone unless
+  it changed (re-saving the Portal endpoint is a destructive op).
 
 ---
 

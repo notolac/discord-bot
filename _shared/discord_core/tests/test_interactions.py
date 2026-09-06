@@ -63,6 +63,18 @@ def test_modal_values_flatten_labels():
     assert interaction.modal_values() == {"about": "hello", "tags": ["a", "b"]}
 
 
+def test_message_component_accepts_integer_component_id(component_interaction):
+    """Selects send ``data.id`` as a 32-bit component id, not a snowflake string."""
+    payload = component_interaction("role_ask", ["org"])
+    payload["data"]["id"] = 10
+    payload["data"]["component_type"] = 3
+    interaction = Interaction.model_validate(payload)
+    assert interaction.custom_id == "role_ask"
+    assert interaction.data is not None
+    assert interaction.data.id == "10"
+    assert interaction.data.values == ["org"]
+
+
 def test_focused_option(command_interaction):
     interaction = Interaction.model_validate(
         command_interaction("search", [{"name": "q", "type": 3, "value": "he", "focused": True}])
