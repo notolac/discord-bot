@@ -26,14 +26,18 @@ Source: [Building your first Discord Bot](https://docs.discord.com/developers/qu
   permissions per bot README:
   - Heimdal: Send Messages, Manage Roles, Embed Links.
   - Odin: Send Messages, Moderate Members, Manage Messages, Read Message History.
-- Open the install link → **Add to server** → pick the **test server** (`DISCORD_DEV_GUILD_ID` =
-  server id; enable Developer Mode in Discord to copy ids).
+- Open the install link → **Add to server** → pick the **test server** first
+  (`DISCORD_DEV_GUILD_ID` = that server id; enable Developer Mode in Discord to copy ids).
+  Invite the **same** application to the production server and store that id as
+  `DISCORD_PROD_GUILD_ID`. One token covers both guilds; command sync and admin-helper
+  default to the dev guild unless you pass `--guild`.
 
 ## 4. Register commands
 
 ```bash
-cp bots/<bot>/.env.example bots/<bot>/.env   # fill the four DISCORD_* values
-bash bots/<bot>/scripts/sync-commands.sh     # → dev guild, prints the diff
+cp bots/<bot>/.env.example bots/<bot>/.env   # fill DISCORD_* (APP_ID, PUBLIC_KEY, TOKEN, DEV/PROD guild ids)
+bash bots/<bot>/scripts/sync-commands.sh     # → DISCORD_DEV_GUILD_ID, prints the diff
+# bash bots/<bot>/scripts/sync-commands.sh --guild <DISCORD_PROD_GUILD_ID>
 ```
 
 Guild commands appear immediately. Global (`--global --yes`) only when the bot is ready for

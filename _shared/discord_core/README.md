@@ -12,7 +12,7 @@ Discord API v10 (HTTP interactions model); no large framework.
 | `router.py` | Dispatch by interaction type → command name / `custom_id` prefix; optional deferred execution | — |
 | `http.py` | Async `httpx` client: auth header, `User-Agent`, 429 retry, error parsing | [Reference](https://docs.discord.com/developers/reference) |
 | `app.py` | FastAPI factory exposing `POST /interactions` and `GET /healthz` | [Interactions Overview](https://docs.discord.com/developers/interactions/overview#preparing-for-interactions) |
-| `settings.py` | `pydantic-settings` base settings (`DISCORD_APP_ID`, `DISCORD_PUBLIC_KEY`, `DISCORD_BOT_TOKEN`, …) | [Getting Started](https://docs.discord.com/developers/quick-start/getting-started) |
+| `settings.py` | `pydantic-settings` base settings (`DISCORD_APP_ID`, `DISCORD_PUBLIC_KEY`, `DISCORD_BOT_TOKEN`, `DISCORD_DEV_GUILD_ID`, `DISCORD_PROD_GUILD_ID`, …) | [Getting Started](https://docs.discord.com/developers/quick-start/getting-started) |
 | `logging.py` | `structlog` setup: console/JSON on stdout + rotating file under the bot's `logs/` | — |
 | `i18n.py` | Locale string tables (`i18n/<locale>.json`) + helpers for `name_localizations` | [Reference › Locales](https://docs.discord.com/developers/reference#locales) |
 | `cli.py` | Shared CLI for bots: `serve`, `sync-commands`, `list-commands`, `smoke` | — |

@@ -50,7 +50,7 @@ Implemented on top of the official API, no large framework:
 | `commands.py` | Typed command declaration (`CHAT_INPUT`/`USER`/`MESSAGE`, options, `default_member_permissions`, `integration_types`, `contexts`, `name_localizations`/`description_localizations`) + idempotent **sync**: bulk `PUT` to guild (dev) or global (prod) with a diff first | Application Commands |
 | `router.py` | Dispatch by `type` → by `data.name` (commands) or `custom_id` prefix (components/modals); decorators `@command("name")`, `@component("prefix_")`, `@modal("prefix_")` | Overview |
 | `app.py` | FastAPI factory: `create_app(settings, router)` → `POST /interactions` with verification, `PONG`, 3 s deadline (auto-`deferred` if the handler declares `slow=True`) | Overview |
-| `settings.py` | `pydantic-settings`: `DISCORD_APP_ID`, `DISCORD_PUBLIC_KEY`, `DISCORD_BOT_TOKEN`, `DISCORD_DEV_GUILD_ID`, `LOG_LEVEL`, `PORT` | Getting Started |
+| `settings.py` | `pydantic-settings`: `DISCORD_APP_ID`, `DISCORD_PUBLIC_KEY`, `DISCORD_BOT_TOKEN`, `DISCORD_DEV_GUILD_ID`, `DISCORD_PROD_GUILD_ID`, `LOG_LEVEL`, `PORT` | Getting Started |
 | `logging.py` | `structlog` JSON → stdout + rotated file under the bot's `logs/` | — |
 
 Each bot depends on `discord_core` through the uv workspace (`{ workspace = true }`).
@@ -147,7 +147,7 @@ discord-bot/
 bots/heimdal/
 ├── README.md            ← purpose, commands, permissions/intents, how to run, decisions
 ├── pyproject.toml       ← package `heimdal`, == pinned deps, script `heimdal = "heimdal.__main__:main"`
-├── .env.example         ← DISCORD_APP_ID / DISCORD_PUBLIC_KEY / DISCORD_BOT_TOKEN / DISCORD_DEV_GUILD_ID / PORT
+├── .env.example         ← DISCORD_APP_ID / DISCORD_PUBLIC_KEY / DISCORD_BOT_TOKEN / DISCORD_DEV_GUILD_ID / DISCORD_PROD_GUILD_ID / PORT
 ├── src/heimdal/
 │   ├── __init__.py
 │   ├── __main__.py      ← `uv run heimdal serve` / `sync-commands`

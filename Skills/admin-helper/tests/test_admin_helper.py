@@ -69,6 +69,19 @@ def test_load_env_file_does_not_override(
     assert admin_helper.os.environ["DISCORD_GUILD_ID"] == "111"
 
 
+def test_resolve_guild_ignores_prod_as_default(
+    admin_helper: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("DISCORD_GUILD_ID", raising=False)
+    monkeypatch.setenv("DISCORD_PROD_GUILD_ID", "999")
+    monkeypatch.setenv("DISCORD_DEV_GUILD_ID", "111")
+    assert admin_helper.resolve_guild(None, None) == "111"
+    monkeypatch.delenv("DISCORD_DEV_GUILD_ID", raising=False)
+    with pytest.raises(SystemExit):
+        admin_helper.resolve_guild(None, None)
+    assert admin_helper.resolve_guild("999", None) == "999"
+
+
 def test_confirm_write_requires_yes_when_not_a_tty(
     admin_helper: ModuleType, monkeypatch: pytest.MonkeyPatch
 ) -> None:

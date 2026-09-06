@@ -15,7 +15,7 @@ need `sudo`. Per-bot scripts live in `bots/<bot>/scripts/` (documented in each `
 | Script | Wraps | Notes |
 |--------|-------|-------|
 | `run-dev.sh` | `uv run <bot> serve --reload` | Requires `bots/<bot>/.env` |
-| `sync-commands.sh [--guild ID\|--global] [--dry-run] [--yes]` | `uv run <bot> sync-commands` | Default target `DISCORD_DEV_GUILD_ID`; global deletions need `--yes` |
+| `sync-commands.sh [--guild ID\|--global] [--dry-run] [--yes]` | `uv run <bot> sync-commands` | Default target `DISCORD_DEV_GUILD_ID`; production is `--guild` + `DISCORD_PROD_GUILD_ID`; global deletions need `--yes` |
 | `smoke-test.sh` | `uv run <bot> smoke` | Offline: PING→PONG, unsigned→401, unknown command→ephemeral |
 
 ## Skill installer (`Skills/`)

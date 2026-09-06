@@ -23,6 +23,6 @@ Then follow [`docs/developer-portal.md`](../docs/developer-portal.md), fill the 
 | Subcommand | Effect |
 |------------|--------|
 | `serve [--reload] [--host] [--port]` | Run the interactions HTTP server |
-| `sync-commands [--guild ID\|--global] [--dry-run] [--yes]` | Diff and bulk-register commands |
+| `sync-commands [--guild ID\|--global] [--dry-run] [--yes]` | Diff and bulk-register commands (default: `DISCORD_DEV_GUILD_ID`; prod: `--guild` + `DISCORD_PROD_GUILD_ID`) |
 | `list-commands` | Print declared command payloads (JSON) and warn on handler mismatches |
 | `smoke` | Offline endpoint self-test with a throwaway key pair |
