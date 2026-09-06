@@ -13,6 +13,15 @@
 # Official docs cache (regenerable via the discord-docs skill script)
 docs/discord/
 
+# Agent skill install targets (created by Skills/install_skills.sh)
+Skills/*/.install-manifest
+.cursor/skills/
+.github/skills/
+.opencode/skills/
+.opencode/commands/
+.claude/skills/
+.agents/skills/
+
 # Python / uv
 .venv/
 **/__pycache__/

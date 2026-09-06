@@ -18,11 +18,31 @@ need `sudo`. Per-bot scripts live in `bots/<bot>/scripts/` (documented in each `
 | `sync-commands.sh [--guild ID\|--global] [--dry-run] [--yes]` | `uv run <bot> sync-commands` | Default target `DISCORD_DEV_GUILD_ID`; global deletions need `--yes` |
 | `smoke-test.sh` | `uv run <bot> smoke` | Offline: PING→PONG, unsigned→401, unknown command→ephemeral |
 
-## Skill script (`.cursor/skills/discord-docs/scripts/`)
+## Skill installer (`Skills/`)
+
+| Script | Purpose | When to run | Side effects |
+|--------|---------|-------------|--------------|
+| `install_skills.sh` | Symlink (or copy) `Skills/<name>/` into IDE discovery paths (Cursor, Copilot, OpenCode, Claude Code, Codex, `.agents/skills`) | Clone / new machine / after adding a skill | Creates gitignored IDE folders; writes `Skills/<name>/.install-manifest` |
+
+```bash
+./Skills/install_skills.sh --auto                      # all skills, detected IDE, project, symlink
+./Skills/install_skills.sh --auto --skill discord-docs
+./Skills/install_skills.sh --auto --skill admin-helper
+./Skills/install_skills.sh --sync                      # new/missing only
+./Skills/install_skills.sh --uninstall --all
+```
+
+## Skill script (`Skills/discord-docs/scripts/`)
 
 | Script | Purpose |
 |--------|---------|
 | `fetch_discord_docs.py [--all\|--check\|<slug>…]` | Mirrors official docs (`.md`) into `docs/discord/`; stdlib only |
+
+## Skill script (`Skills/admin-helper/scripts/`)
+
+| Script | Purpose |
+|--------|---------|
+| `admin_helper <command>` | Guild admin REST CLI (members, reports, channels). Writes need `--yes` after user approval. Stdlib only |
 
 ## Conventions
 

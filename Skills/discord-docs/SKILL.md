@@ -1,6 +1,6 @@
 ---
 name: discord-docs
-description: >-
+description: >
   Knowledge base of the official Discord Developers documentation (interactions, application
   commands, components, reference, gateway/intents, permissions, resources). Consults the
   local mirror docs/discord/*.md first and, if missing or stale, downloads the official page
@@ -23,10 +23,10 @@ enum values, limits or field names: when unsure, read the page and cite it.
    not mirrored): run from the repo root
 
    ```bash
-   python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py                 # curated set (index.md)
-   python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py resources/guild # one slug
-   python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py --all           # everything in llms.txt
-   python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py --check         # detect upstream changes
+   python Skills/discord-docs/scripts/fetch_discord_docs.py                 # curated set (index.md)
+   python Skills/discord-docs/scripts/fetch_discord_docs.py resources/guild # one slug
+   python Skills/discord-docs/scripts/fetch_discord_docs.py --all           # everything in llms.txt
+   python Skills/discord-docs/scripts/fetch_discord_docs.py --check         # detect upstream changes
    ```
 
    Any page works: take the official URL and append `.md`

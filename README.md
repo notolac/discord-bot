@@ -16,7 +16,8 @@ a minimal shared library (`discord_core`). All code and technical documentation 
 | **[bots/README.md](bots/README.md)** | Bot inventory and status |
 | **[_shared/discord_core/README.md](_shared/discord_core/README.md)** | Shared library modules |
 | **[_shared/scripts/GUIDE.md](_shared/scripts/GUIDE.md)** | Script catalog |
-| **[.cursor/skills/discord-docs/SKILL.md](.cursor/skills/discord-docs/SKILL.md)** | Official Discord documentation knowledge base (local mirror in `docs/discord/`) |
+| **[Skills/discord-docs/SKILL.md](Skills/discord-docs/SKILL.md)** | Official Discord documentation knowledge base (local mirror in `docs/discord/`) |
+| **[Skills/admin-helper/SKILL.md](Skills/admin-helper/SKILL.md)** | Guild admin via REST: member reports and channel create/edit/delete |
 | **[tareas/](tareas/README.md)** | Open work: deployment, CI, Gateway, AutoMod, and persistence |
 
 ## Bots
@@ -38,9 +39,11 @@ discord-bot/
 ├── PLAN-IMPLEMENTACION.md     ← implementation plan
 ├── pyproject.toml / uv.lock   ← uv workspace (virtual root listing all members)
 ├── .python-version            ← 3.14
-├── .cursor/
-│   ├── rules/discord-bot.mdc  ← always-on reminder
-│   └── skills/discord-docs/   ← skill and official docs mirror script
+├── .cursor/rules/             ← Cursor always-on reminder (IDE install targets are gitignored)
+├── Skills/
+│   ├── install_skills.sh      ← symlink/copy skills into Cursor, Copilot, OpenCode, Claude, Codex
+│   ├── discord-docs/          ← portable skill + official docs mirror script
+│   └── admin-helper/          ← guild admin CLI (members, channels, reports)
 ├── docs/                      ← architecture.md · developer-portal.md · discord/ (mirror, gitignored)
 ├── _shared/
 │   ├── discord_core/          ← shared library (src/ + tests/)
@@ -58,6 +61,7 @@ Each bot contains: `src/<bot>/` · `i18n/` · `scripts/` · `tests/` · `docs/` 
 
 ```bash
 uv sync                                          # install the whole workspace
+./Skills/install_skills.sh --auto                # skill → IDE discovery paths
 uv run ruff check . && uv run pytest -q          # quality checks
 cp bots/heimdal/.env.example bots/heimdal/.env   # fill from the Developer Portal
 bash bots/heimdal/scripts/smoke-test.sh          # offline endpoint self-test
@@ -68,6 +72,50 @@ bash _shared/scripts/dev-tunnel.sh 8000          # public URL → Portal › Int
 
 Create a new bot with `bash _shared/scripts/new-bot.sh thor "Events bot"`.
 
+## Agent Skills (`Skills/`)
+
+Repo-local [Agent Skills](https://agentskills.io). Each subdirectory with a `SKILL.md` file is
+one skill. Source of truth is `Skills/`; IDE folders (`.cursor/skills/`, `.github/skills/`,
+`.opencode/skills/`, `.claude/skills/`, `.agents/skills/`) are install targets and gitignored.
+
+| Skill | Purpose |
+|-------|---------|
+| [discord-docs](Skills/discord-docs/) | Official Discord Developers docs: local mirror `docs/discord/` + fetch script |
+| [admin-helper](Skills/admin-helper/) | Guild admin via REST: member reports, create/edit/delete channels (`/discord.admin`) |
+
+Human overview: [`Skills/discord-docs/README.md`](Skills/discord-docs/README.md),
+[`Skills/admin-helper/README.md`](Skills/admin-helper/README.md). Agent instructions live in
+each skill's `SKILL.md`.
+
+### Install into your IDE
+
+From the repo root:
+
+```bash
+./Skills/install_skills.sh
+```
+
+Interactive wizard: sync missing skills, quick install (detected IDE, project, symlink),
+custom install (scope / IDE / symlink-or-copy), or uninstall.
+
+Non-interactive:
+
+```bash
+./Skills/install_skills.sh --auto                      # all skills
+./Skills/install_skills.sh --sync                      # only new/missing (reuse prior IDE prefs)
+./Skills/install_skills.sh --auto --skill discord-docs # one skill
+./Skills/install_skills.sh --skills                    # list discoverable skills
+./Skills/install_skills.sh --uninstall --all
+```
+
+Skills are **auto-discovered** from `Skills/*/SKILL.md` (no allowlist). After adding a new
+skill folder, run `--sync` (or `--auto`) so IDE paths pick it up.
+
+After install, reload your IDE. OpenCode command wrappers use `discord.*` names
+(`/discord.docs`, `/discord.admin`). Command definitions stay with each skill at
+`Skills/<name>/commands/opencode/`. Per-skill install state is stored in
+`Skills/<name>/.install-manifest` (gitignored).
+
 ## Agent rules (human summary)
 
 The complete rules are in **[AGENTS.md](AGENTS.md)**:
@@ -75,6 +123,6 @@ The complete rules are in **[AGENTS.md](AGENTS.md)**:
 - Code, comments, tests, and technical docs are **English-only**; Discord text uses `en-US` with `es-ES` translations in `i18n/`.
 - **uv** + Python **3.14**, dependencies pinned with `==`, and one `uv.lock`.
 - Never commit `.env` files, tokens, or real keys.
-- Destructive operations (purge, ban, global command sync that deletes commands, and Portal changes) require **explicit user approval**.
+- Destructive operations (purge, ban, global command sync that deletes commands, Portal changes, and **admin-helper** channel create/edit/delete) require **explicit user approval**.
 - Register commands to the test server first; use global registration only when requested.
 - For API questions, use the `discord-docs` skill: local mirror first, then download, then web.

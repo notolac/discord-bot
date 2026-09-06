@@ -1,6 +1,6 @@
 # AGENTS — LLM only
 
-**Last modified:** 2026-09-06 (foundations: `discord_core`, Heimdal, Odin, `discord-docs` skill)
+**Last modified:** 2026-09-06 (admin-helper skill: guild admin CLI for members/channels)
 
 Human introduction and repository map: [README.md](README.md).
 Roadmap / phases: [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md).
@@ -8,7 +8,8 @@ Architecture: [docs/architecture.md](docs/architecture.md).
 Developer Portal checklist: [docs/developer-portal.md](docs/developer-portal.md).
 Open work: [tareas/README.md](tareas/README.md).
 Script catalog: [_shared/scripts/GUIDE.md](_shared/scripts/GUIDE.md).
-Official Discord docs (skill): [.cursor/skills/discord-docs/SKILL.md](.cursor/skills/discord-docs/SKILL.md).
+Official Discord docs (skill): [Skills/discord-docs/SKILL.md](Skills/discord-docs/SKILL.md).
+Install into IDE paths: [`Skills/install_skills.sh`](Skills/install_skills.sh).
 
 ---
 
@@ -19,8 +20,8 @@ Official Discord docs (skill): [.cursor/skills/discord-docs/SKILL.md](.cursor/sk
 - **RULE:** **English-only code**: identifiers, comments, docstrings, tests, log/exception messages, CLI help, env var names, JSONL keys, commit messages, and every technical doc (`AGENTS.md`, `docs/`, bot READMEs, `tareas/`, skills, rules). The root `README.md` is also English. Non-English code is a **blocker**, not a nit.
 - **RULE:** Discord-facing strings (command names/descriptions, buttons, modal titles, messages) are authored in **`en-US`** and localized through `name_localizations` / `description_localizations` and the bot's `i18n/<locale>.json` (`es-ES` shipped). No Spanish literals inline in handlers.
 - **RULE:** New Python → **uv** only, **Python 3.14** (`requires-python = "==3.14.*"`), direct deps pinned **`==`**, one `uv.lock` at repo root (commit it). No `pip install`, no version ranges.
-- **RULE:** **Never** commit `.env`, tokens, or real app public keys. `.env.example` holds placeholders only. Observed gitignored: `.env*`, `**/logs/*`, `**/reports/*`, `docs/discord/`.
-- **RULE:** **Destructive Discord ops need explicit user yes** before running: `/purge`, ban/kick, **global** command sync (bulk `PUT` deletes commands not in the list — CLI refuses without `--yes`), deleting commands, changing bot permissions/intents/endpoint URL in the Portal.
+- **RULE:** **Never** commit `.env`, tokens, or real app public keys. `.env.example` holds placeholders only. Observed gitignored: `.env*`, `**/logs/*`, `**/reports/*`, `docs/discord/`, `Skills/*/.install-manifest`, `.cursor/skills/`, `.github/skills/`, `.opencode/skills/`, `.opencode/commands/`, `.claude/skills/`, `.agents/skills/`.
+- **RULE:** **Destructive Discord ops need explicit user yes** before running: `/purge`, ban/kick, **global** command sync (bulk `PUT` deletes commands not in the list — CLI refuses without `--yes`), deleting commands, changing bot permissions/intents/endpoint URL in the Portal, and **admin-helper** `channel-create` / `channel-edit` / `channel-move` / `channel-delete`.
 - **RULE:** Register commands to the **dev guild** first (`DISCORD_DEV_GUILD_ID`, instant). Global only when the user asks.
 - **RULE:** One bot ↔ one Application ID ↔ one token. Never share tokens between bots.
 - **RULE:** Interaction handlers answer within **3 s** or are declared `defer=True` (router ACKs, runs later, edits original). Token lives 15 min.
@@ -39,9 +40,9 @@ verification), sharing one thin library. Python 3.14, uv workspace, pytest, ruff
 |------|------|
 | [`_shared/discord_core/`](_shared/discord_core/README.md) | Shared library: security, models, response builders, command sync, router, HTTP client, app factory, settings, logging, i18n, CLI |
 | [`_shared/scripts/`](_shared/scripts/GUIDE.md) | Cross-bot scripts: `new-bot.sh`, `dev-tunnel.sh` |
+| [`Skills/`](Skills/discord-docs/README.md) | Portable Agent Skills (`SKILL.md` per folder) + `install_skills.sh` (`discord-docs`, `admin-helper`) |
 | [`bots/<name>/`](bots/README.md) | One bot per folder (`heimdal` onboarding, `odin` moderation, `_template`) |
 | [`docs/`](docs/) | Architecture, Developer Portal checklist, `docs/discord/` mirror (generated) |
-| [`.cursor/skills/discord-docs/`](.cursor/skills/discord-docs/SKILL.md) | Official docs knowledge base + mirror script |
 | [`tareas/`](tareas/README.md) | Open work board (one `.md` per task) |
 
 Root `pyproject.toml` is a **virtual** workspace (`package = false`) that lists every member as a
@@ -60,7 +61,9 @@ dependency so `uv sync` installs everything. `bots/_template` is excluded from t
 | Heimdal commands / permissions / decisions | [bots/heimdal/README.md](bots/heimdal/README.md) · [design](bots/heimdal/docs/design.md) |
 | Odin commands / audit log format / decisions | [bots/odin/README.md](bots/odin/README.md) · [design](bots/odin/docs/design.md) |
 | New bot procedure | [bots/_template/README.md](bots/_template/README.md) · `_shared/scripts/new-bot.sh` |
-| Official Discord facts (enums, limits, endpoints) | skill [SKILL.md](.cursor/skills/discord-docs/SKILL.md) · index [index.md](.cursor/skills/discord-docs/index.md) · mirror `docs/discord/` |
+| Official Discord facts (enums, limits, endpoints) | skill [SKILL.md](Skills/discord-docs/SKILL.md) · index [index.md](Skills/discord-docs/index.md) · mirror `docs/discord/` |
+| Guild admin (members, channels, reports) | skill [admin-helper](Skills/admin-helper/SKILL.md) · CLI `Skills/admin-helper/scripts/admin_helper` |
+| Install skills into an IDE | [`Skills/install_skills.sh`](Skills/install_skills.sh) |
 | Pending work | [tareas/README.md](tareas/README.md) |
 | Plan and phases | [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md) |
 
@@ -110,7 +113,9 @@ bash bots/heimdal/scripts/sync-commands.sh [--dry-run] [--global --yes]
 bash bots/heimdal/scripts/run-dev.sh                                  # uvicorn --reload (needs .env)
 bash _shared/scripts/dev-tunnel.sh 8000                               # cloudflared/ngrok public URL
 bash _shared/scripts/new-bot.sh thor "Events bot"                     # scaffold + register in workspace
-python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py [--all|--check|<slug>]
+python Skills/discord-docs/scripts/fetch_discord_docs.py [--all|--check|<slug>]
+./Skills/admin-helper/scripts/admin_helper --env-file bots/<bot>/.env --json me
+./Skills/install_skills.sh --auto --skill admin-helper                # symlink into IDE discovery paths
 ```
 
 Same commands with `odin` (default port 8001 in its `.env.example`).
@@ -153,6 +158,7 @@ Need **explicit user yes** before:
 - Global command sync that removes commands; deleting commands.
 - Rotating tokens / public keys, changing intents, install contexts or the Interactions Endpoint URL.
 - Deleting `reports/` data (contains user IDs; retention in each `reports/README.md`).
+- **admin-helper** writes: `channel-create`, `channel-edit`, `channel-move`, `channel-delete`.
 
 CLI flags (`--yes`) are **not** a substitute for user approval.
 
