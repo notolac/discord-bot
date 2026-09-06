@@ -1,0 +1,23 @@
+{
+  "welcome.title": "## Bienvenido al servidor",
+  "welcome.body": "¡Hola {user}! Lee las reglas y pulsa el botón de abajo para desbloquear la comunidad.",
+  "welcome.accept_button": "Acepto las reglas",
+  "welcome.rules_link": "Leer las reglas",
+  "welcome.not_for_you": "Este botón es para {user}. Pide a un moderador que ejecute `/bienvenida` para ti.",
+  "welcome.accepted": "{user} ha aceptado las reglas. ¡Bienvenido a bordo!",
+  "welcome.role_failed": "No he podido asignarte el rol. Se ha avisado a un moderador.",
+  "roles.not_configured": "Todavía no hay roles de interés configurados.",
+  "roles.prompt": "Elige los temas que te interesan:",
+  "roles.placeholder": "Selecciona roles…",
+  "roles.guild_only": "Los roles solo se pueden asignar dentro de un servidor.",
+  "roles.none": "No se ha asignado ningún rol.",
+  "roles.granted": "Roles asignados: {roles}",
+  "introduce.title": "Preséntate",
+  "introduce.name_label": "¿Cómo quieres que te llamemos?",
+  "introduce.about_label": "Cuéntanos sobre ti",
+  "introduce.interests_label": "Intereses (opcional)",
+  "introduce.card_title": "## {user} se une a la tripulación como **{name}**",
+  "introduce.card_interests": "**Intereses:** {interests}",
+  "introduce.posted_elsewhere": "¡Gracias! Tu presentación se ha publicado en {channel}.",
+  "introduce.post_failed": "No he podido publicar tu presentación. Inténtalo más tarde."
+}

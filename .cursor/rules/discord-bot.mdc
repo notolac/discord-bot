@@ -1,0 +1,13 @@
+---
+description: discord-bot repo conventions (always on)
+alwaysApply: true
+---
+
+- Read `AGENTS.md` before non-trivial work; roadmap in `PLAN-IMPLEMENTACION.md`.
+- **English only** for code, comments, docstrings, tests, logs, commits and technical docs. Root `README.md` is the only Spanish file. Discord-facing strings: `en-US` default + `es-ES` in the bot's `i18n/`.
+- Python via **uv** only, `==3.14.*`, deps pinned `==`, single root `uv.lock`. Never `pip install`.
+- Never write real tokens/keys anywhere but `.env` (gitignored). `.env.example` = placeholders.
+- Handlers answer in **3 s** or use `@router.command(..., defer=True)`; build payloads with `discord_core.responses`.
+- Commands → dev guild first. **Global sync, `/purge`, ban/kick, Portal changes need explicit user yes.**
+- Discord API questions → skill `discord-docs`: `docs/discord/<slug>.md` first, then `python .cursor/skills/discord-docs/scripts/fetch_discord_docs.py <slug>`, web last. Cite the page; never invent enums/limits/endpoints.
+- Verify: `uv run ruff check . && uv run pytest -q && uv run <bot> smoke`.

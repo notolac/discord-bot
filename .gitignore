@@ -1,0 +1,24 @@
+# Secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Runtime output (keep placeholders)
+**/logs/*
+!**/logs/.gitkeep
+**/reports/*
+!**/reports/.gitkeep
+!**/reports/README.md
+
+# Official docs cache (regenerable via the discord-docs skill script)
+docs/discord/
+
+# Python / uv
+.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
