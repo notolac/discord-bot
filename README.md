@@ -126,3 +126,7 @@ The complete rules are in **[AGENTS.md](AGENTS.md)**:
 - Destructive operations (purge, ban, global command sync that deletes commands, Portal changes, and **admin-helper** channel create/edit/delete) require **explicit user approval**.
 - Register commands to the test server first (`DISCORD_DEV_GUILD_ID`). Production is `DISCORD_PROD_GUILD_ID` in the same `.env` — pass `--guild`; it is never the implicit default. Global registration only when requested.
 - For API questions, use the `discord-docs` skill: local mirror first, then download, then web.
+
+## GitHub security
+
+[Controls, rationale, verification and rollback](docs/github-hardening.md).
