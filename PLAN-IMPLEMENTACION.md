@@ -29,8 +29,7 @@ Every page also exists as plain Markdown by appending `.md` to the URL
 
 - **Common base (all bots):** HTTP endpoint `/interactions` (FastAPI + uvicorn) with Ed25519
   verification (`PyNaCl`) and `PONG`. This is the model documented by the chosen pages, needs
-  no persistent connection, scales like any HTTP service and fits the homelab (Traefik /
-  Cloudflare already exist in `documentation`).
+  no persistent connection and scales like any HTTP service behind a configurable HTTPS endpoint.
 - **Gateway extension (per bot, only when needed):** `gateway/` module with `discord.py` for
   events HTTP does not deliver (e.g. `GUILD_MEMBER_ADD` for automatic onboarding on join).
   Discord requires an app to receive interactions **through one path only**; if a bot enables
@@ -60,13 +59,13 @@ Each bot depends on `discord_core` through the uv workspace (`{ workspace = true
 
 - **Python `==3.14.*`** (`.python-version` at root; already available: `cpython-3.14.7`).
 - **uv workspace** (`uv 0.11.x`): one `uv.lock` at root, members `bots/*` and `_shared/discord_core`.
-- Direct dependencies **pinned with `==`** (same rule as `documentation`). Current versions at
+- Direct dependencies **pinned with `==`**. Current versions at
   plan date (verify when executing): `httpx 0.28.1`, `PyNaCl 1.6.2`, `fastapi 0.141.1`,
   `uvicorn 0.52.4`, `pydantic 2.13.5`, `pydantic-settings 2.15.0`, `structlog 26.1.0`,
   `discord.py 2.7.1` (optional extra), dev: `ruff 0.16.6`, `pytest 9.1.1`, `pytest-asyncio 1.4.0`;
   build: `hatchling 1.32.0`.
 - Lint/format: `ruff` (config at root). Tests: `pytest` per bot and for `discord_core`.
-- No CI in the base phase (same as `documentation`); `tareas/ci.md` left as pending.
+- No CI in the base phase; `tareas/ci.md` left as pending.
 
 ### 1.4 Language policy (strict)
 
@@ -92,7 +91,7 @@ Each bot depends on `discord_core` through the uv workspace (`{ workspace = true
 ```text
 discord-bot/
 ├── README.md                     ← human-facing repository entry point
-├── AGENTS.md                     ← LLM, English (adapted from documentation)
+├── AGENTS.md                     ← LLM, English
 ├── PLAN-IMPLEMENTACION.md        ← this document
 ├── LICENSE
 ├── .gitignore
@@ -129,7 +128,7 @@ discord-bot/
 │   │   ├── src/discord_core/
 │   │   └── tests/
 │   └── scripts/
-│       ├── GUIDE.md              ← script catalog (documentation pattern)
+│       ├── GUIDE.md              ← script catalog
 │       ├── new-bot.sh            ← creates a bot from bots/_template
 │       └── dev-tunnel.sh         ← local public tunnel (cloudflared/ngrok) for /interactions
 ├── bots/
@@ -228,11 +227,11 @@ working `/ping`, `scripts/`, `tests/`, `i18n/`, `logs/`, `reports/`.
 
 ---
 
-## 4. Root documents (adapted from `documentation`)
+## 4. Root documents
 
 ### 4.1 `README.md` (English, human)
 
-Keeps the style of `documentation/README.md`: opening paragraph, core documents table, repository
+Structure: opening paragraph, core documents table, repository
 structure tree, bot table (instead of hosts), and summarized agent rules linking to `AGENTS.md`.
 Everything network/SSH/K3s-specific is dropped. Content:
 
@@ -247,8 +246,7 @@ Everything network/SSH/K3s-specific is dropped. Content:
 Kept from the original: **Last modified** header, **RULES** block, **Source of truth map**,
 **Layout conventions**, **Essential commands**, **Build / test / lint reality**, **Code patterns**,
 **High-risk gotchas**, **Destructive operations policy**, **If you update this file later**.
-Dropped: network topology, SSH, K3s, Traefik, Portainer, Graphify, RTK, sibling repos (except a
-pointer to `documentation` as the future deployment repo).
+Deployment-specific infrastructure and unrelated repositories are outside this document.
 
 New repo-specific rules:
 
@@ -373,7 +371,7 @@ build-backend = "hatchling.build"
 | **4. Heimdal (base)** | §3.1: public rules → `member`; `/request-role` + staff Approve; cosmetic `/roles`; `/introduce`; README allowlist + hierarchy | `sync-commands` to dev guild first; pytest + smoke; prod guild only with `--guild` |
 | **5. Odin (base)** | §3.2 Base commands, `reports/` JSONL + format README, `/purge` confirmation | same + unit test for the report log |
 | **6. `discord-docs` skill** | §7 complete, local cache generated | Invoke the skill and resolve a question (e.g. "choices limit") using the local cache only |
-| **7. Deployment (pending, `tareas/`)** | Dockerfile per bot (`uv` multi-stage), dev tunnel, Traefik/Cloudflare route in `documentation`, `GET /healthz` healthcheck | Out of scope for the foundations; a task is opened |
+| **7. Deployment (pending, `tareas/`)** | Dockerfile per bot (`uv` multi-stage), dev tunnel, configurable HTTPS route, `GET /healthz` healthcheck | Out of scope for the foundations; a task is opened |
 
 Extensions (open tasks): Gateway for `GUILD_MEMBER_ADD` in Heimdal; AutoMod in Odin; CI
 (ruff + pytest); persistence (SQLite/Postgres) replacing JSONL; additional locales beyond `es-ES`.
@@ -434,7 +432,7 @@ detect upstream changes (prints a table; `reports/` does not apply, it is repo-l
 | HTTP vs Gateway for onboarding | Automatic welcome on join needs Gateway + privileged intent `GUILD_MEMBERS` (approval once the bot exceeds 100 servers; on your own server toggling it in the Portal is enough) | HTTP base + persistent `/welcome` card (no user id); Gateway remains a documented extension |
 | Folder name `odin` vs `Odin` | Accents in paths/Python packages break imports and shells | Folder and package `odin`; "Odin" in prose |
 | English-first Discord strings | Spanish-speaking members see English if the client locale is not `es-ES` (Discord picks localization by user locale) | `es-ES` localizations shipped from day one; `es-419` added as a follow-up task |
-| Public endpoint | Discord validates the endpoint when saved and audits signatures periodically; downtime → Discord removes the URL and emails you | Healthcheck + stable deployment task in `documentation` (Traefik/Cloudflare) |
+| Public endpoint | Discord validates the endpoint when saved and audits signatures periodically; downtime → Discord removes the URL and emails you | Healthcheck + stable deployment task documented in this repository |
 | Global command `PUT` | Overwrites the full set: commands not included are deleted | Sync script always prints a diff and requires `--yes` for global |
 | Pinned versions | Go stale | Periodic `uv lock --upgrade` task + tests |
 | `reports/` with user IDs | Personal data | Gitignored; README states retention and deletion |
