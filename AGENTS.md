@@ -1,6 +1,6 @@
 # AGENTS — LLM only
 
-**Last modified:** 2026-09-06 (Heimdal: self-serve `member` + staff-approved claimed roles; PROD role order)
+**Last modified:** 2026-11-15
 
 Human introduction and repository map: [README.md](README.md).
 Roadmap / phases: [PLAN-IMPLEMENTACION.md](PLAN-IMPLEMENTACION.md).
@@ -14,6 +14,8 @@ Install into IDE paths: [`Skills/install_skills.sh`](Skills/install_skills.sh).
 ---
 
 ## RULES (this file)
+
+- Public documentation must stand alone: never name or link private repositories, internal hosts, access reviews, or operational gaps. Keep administrative audit records outside this repository.
 
 - **RULE:** Show **last modified** date at top; bump when you change this file.
 - **RULE:** Write **English** only here.

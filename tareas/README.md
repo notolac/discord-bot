@@ -5,7 +5,7 @@ bottom table or delete them once merged).
 
 | Task | Bot / area | Status | Notes |
 |------|------------|--------|-------|
-| [deployment.md](deployment.md) | all | open | Containers + stable HTTPS behind the homelab (plan phase 7) |
+| [deployment.md](deployment.md) | all | open | Containers + stable HTTPS behind an HTTPS endpoint (plan phase 7) |
 | [ci.md](ci.md) | repo | open | ruff + pytest + smoke on push |
 | [gateway-member-add.md](gateway-member-add.md) | heimdal | open | Optional auto-card on join; self-serve `member` already uses a persistent `/welcome` card |
 | [automod.md](automod.md) | odin | open | `/automod` on Discord's AutoMod API |

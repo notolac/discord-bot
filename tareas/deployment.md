@@ -1,6 +1,6 @@
 # Deployment — stable public endpoint
 
-**Status:** open · **Area:** all bots · **Depends on:** homelab (`/path/to/documentation`)
+**Status:** open · **Area:** all bots · **Depends on:** a suitable HTTPS hosting environment
 
 ## Goal
 
@@ -12,7 +12,7 @@ never fails (a failure removes the Interactions Endpoint URL).
 - [ ] `Dockerfile` per bot (multi-stage: `uv sync --frozen --no-dev`, non-root, `CMD ["uv","run","<bot>","serve","--host","0.0.0.0"]`).
 - [ ] `GET /healthz` wired to the orchestrator probe.
 - [ ] Secrets injected as env (`DISCORD_*`), never baked into images.
-- [ ] Route: Traefik (K3s) or Cloudflare Tunnel — decide with the homelab owner; document in `docs/architecture.md`.
+- [ ] Route: Traefik (K3s) or Cloudflare Tunnel — choose for the target deployment; document in `docs/architecture.md`.
 - [ ] Persistent volume for `reports/` (Odin) and `logs/`.
 - [ ] Runbook: rotate token / re-save endpoint URL.
 

@@ -84,6 +84,6 @@ uv sync → fill .env → smoke-test.sh → sync-commands.sh (dev guild) → run
 
 ## Deployment (not part of the foundations)
 
-Target: containers (`uv` multi-stage) behind the homelab's Traefik / Cloudflare with a stable
+Target: containers (`uv` multi-stage) behind a configurable HTTPS reverse proxy with a stable
 HTTPS URL and `GET /healthz` probes. Discord removes the endpoint URL if it fails its periodic
 signature checks, so the service must stay up. Task: [`tareas/deployment.md`](../tareas/deployment.md).
